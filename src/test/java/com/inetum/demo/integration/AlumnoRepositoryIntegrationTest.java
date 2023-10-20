@@ -37,7 +37,7 @@ public class AlumnoRepositoryIntegrationTest {
     private AlumnoRepository alumnoRepository;
 
     @Test
-    public void whenFindByName_thenReturnPokemon() {
+    public void whenFindByAge() {
         // given
         Alumno alumno = new Alumno();
         alumno.setNombre("Pepe");
@@ -46,10 +46,10 @@ public class AlumnoRepositoryIntegrationTest {
         entityManager.flush();
 
         // when
-        List<Alumno> found = alumnoRepository.findByNombre(alumno.getNombre());
+        List<Alumno> found = alumnoRepository.findByEdad(alumno.getEdad());
 
         // then
-        assertEquals(found.get(0).getNombre(), alumno.getNombre());
+        assertEquals(found.get(0).getEdad(), alumno.getEdad());
     }
 
 }

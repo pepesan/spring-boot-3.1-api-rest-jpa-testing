@@ -11,4 +11,5 @@ public interface AlumnoRepository extends JpaRepository<Alumno, Long> {
     public List<Alumno> findByNombre(String name);
     public List<Alumno> findByNombreContains(String name);
     public List<Alumno> findByNombreContainsIgnoreCase(String name);
+    public List<Alumno> findByEdad(Integer edad);
 }
