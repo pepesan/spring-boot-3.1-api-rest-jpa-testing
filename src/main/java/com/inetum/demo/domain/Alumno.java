@@ -1,12 +1,9 @@
 package com.inetum.demo.domain;
 
 import com.inetum.demo.dtos.AlumnoDTO;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 import lombok.NoArgsConstructor;
@@ -17,7 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Alumno {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @Size(min = 3, max = 20, message = "el nombre debe tener mas de 3 letras y menos de 20.")
     private String nombre;
