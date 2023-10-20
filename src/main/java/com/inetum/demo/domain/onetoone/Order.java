@@ -22,7 +22,10 @@ public class Order {
     private String code;
 
     @JsonManagedReference
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "order", fetch = FetchType.LAZY)
+    @OneToOne(
+            cascade = CascadeType.ALL,
+            mappedBy = "order",
+            fetch = FetchType.LAZY)
     private Address billingAddress;
 
 }

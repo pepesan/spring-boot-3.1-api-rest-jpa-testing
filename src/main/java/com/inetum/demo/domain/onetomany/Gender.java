@@ -20,7 +20,10 @@ public class Gender {
     private String name;
 
     @OneToMany(
-            cascade = CascadeType.ALL,
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE
+            },
             fetch = FetchType.EAGER)
     @JoinColumn(name = "gender_id", referencedColumnName = "id")
     private Set<Book> books = new HashSet<>();
