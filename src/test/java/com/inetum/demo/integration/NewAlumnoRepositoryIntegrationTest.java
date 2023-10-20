@@ -60,11 +60,11 @@ public class NewAlumnoRepositoryIntegrationTest {
         assertThat(alumnos).extracting(Alumno::getNombre).containsExactly("David");
     }
 
-//    @Test
-//    public void findByEdad(){
-//        List<Alumno> alumnos = this.alumnoRepository.findByEdad(45);
-//        assertThat(alumnos).hasSize(1);
-//        assertThat(alumnos).extracting(Alumno::getNombre).containsExactly("David");
-//    }
+    @Test
+    public void findByEdad(){
+        List<Alumno> alumnos = this.alumnoRepository.findByEdad(45);
+        assertThat(alumnos).hasSize(1);
+        assertThat(alumnos).extracting(Alumno::getNombre).containsExactly("David");
+    }
 
 }
