@@ -1,4 +1,4 @@
-package com.inetum.demo.services;
+package com.inetum.demo.services.onetomany;
 
 import com.inetum.demo.domain.onetomany.Book;
 import com.inetum.demo.domain.onetomany.Gender;

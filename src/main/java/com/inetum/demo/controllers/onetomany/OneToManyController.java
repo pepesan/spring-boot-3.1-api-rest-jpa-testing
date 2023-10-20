@@ -1,7 +1,7 @@
 package com.inetum.demo.controllers.onetomany;
 
 import com.inetum.demo.domain.onetomany.Gender;
-import com.inetum.demo.services.OneToManyService;
+import com.inetum.demo.services.onetomany.OneToManyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
