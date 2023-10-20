@@ -9,14 +9,21 @@ import jakarta.validation.constraints.Size;
 import lombok.NoArgsConstructor;
 
 @Data
-@Entity(name = "Alumnos")
-@Table(name = "ALUMNOS")
+@Entity(name = "Alumno")
+@Table(name = "ALUMNO")
 @AllArgsConstructor
+@NamedQueries({
+        @NamedQuery(
+                name = "Alumno.searchByNamedQueryName",
+                query = "SELECT a FROM Alumno a WHERE a.nombre = :name"
+        )
+})
 public class Alumno {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @Size(min = 3, max = 20, message = "el nombre debe tener mas de 3 letras y menos de 20.")
+    @Column(name = "name")
     private String nombre;
     private String apellidos;
     @Min(value = 18, message = "el usuario debe tener 18+")
