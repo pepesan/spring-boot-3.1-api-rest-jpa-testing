@@ -152,6 +152,7 @@ class ApiControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.statusCode").value(404))
                 .andExpect(jsonPath("$.message").value("Not found with id = 1"))
-                .andExpect(jsonPath("$.description").value("Error capturado por ResourceNotFoundException"));
+                .andExpect(jsonPath("$.description").value("Error capturado por ResourceNotFoundException"))
+                .andExpect(jsonPath("$.timestamp").exists());
     }
 }
