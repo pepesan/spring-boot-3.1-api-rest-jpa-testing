@@ -39,4 +39,33 @@ public class AlumnoRepositoryController {
 
     }
 
+    @PostMapping("/")
+    public ResponseEntity<Alumno> create(
+            @Valid @RequestBody AlumnoDTO alumnoDto){
+        Alumno alumno = new Alumno(alumnoDto);
+        return ResponseEntity.ok(alumnoRepository.save(alumno));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Alumno> show(@PathVariable Long id){
+        return ResponseEntity.ok(alumnoRepository.findById(id).get());
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Alumno> update(
+            @PathVariable Long id,
+            @Valid @RequestBody AlumnoDTO alumnoDto) {
+        Alumno alumno = alumnoRepository.findById(id).get();
+        alumno.setNombre(alumnoDto.getNombre());
+        alumno.setApellidos(alumnoDto.getApellidos());
+        return ResponseEntity.ok(alumnoRepository.save(alumno));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Alumno> delete(@PathVariable Long id){
+        Alumno alumno = alumnoRepository.findById(id).get();
+        alumnoRepository.delete(alumno);
+        return ResponseEntity.ok(alumno);  //200 OK
+    }
+
 }
