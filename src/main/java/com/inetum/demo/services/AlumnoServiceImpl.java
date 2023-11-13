@@ -41,6 +41,9 @@ public class AlumnoServiceImpl implements AlumnoService{
     @Override
     public Page<Alumno> findAllPageable(int page, int num) {
         PageRequest pageRequest = PageRequest.of(page, num);
+        // TODO:  añadir ordenación
+
+
         return this.alumnoRepository.findAll(pageRequest);
     }
 }

@@ -36,6 +36,11 @@ public class AlumnoRepositoryIntegrationTest {
     @Autowired
     private AlumnoRepository alumnoRepository;
 
+    @BeforeEach
+    void setUp() {
+        this.alumnoRepository.deleteAll();
+    }
+
     @Test
     public void whenFindByAge() {
         // given
@@ -50,6 +55,54 @@ public class AlumnoRepositoryIntegrationTest {
 
         // then
         assertEquals(found.get(0).getEdad(), alumno.getEdad());
+    }
+
+    @Test
+    public void whenFindByNombre() {
+        // given
+        Alumno alumno = new Alumno();
+        alumno.setNombre("Pepe");
+        alumno.setEdad(21);
+        testEntityManager.persist(alumno);
+        entityManager.flush();
+
+        // when
+        List<Alumno> found = alumnoRepository.findByNombre("Pepe");
+
+        // then
+        assertEquals(found.get(0).getNombre(), alumno.getNombre());
+    }
+
+    @Test
+    public void whenfindAlumnosByName() {
+        // given
+        Alumno alumno = new Alumno();
+        alumno.setNombre("Pepe");
+        alumno.setEdad(21);
+        testEntityManager.persist(alumno);
+        entityManager.flush();
+
+        // when
+        List<Alumno> found = alumnoRepository.findAlumnosByName("Pepe");
+
+        // then
+        assertEquals(found.get(0).getNombre(), alumno.getNombre());
+    }
+
+    @Test
+    public void whenSearchByNamedQueryName() {
+        // given
+        Alumno alumno = new Alumno();
+        alumno.setNombre("Pepe");
+        alumno.setEdad(21);
+        testEntityManager.persist(alumno);
+        entityManager.flush();
+
+        // when
+        List<Alumno> found = alumnoRepository.searchByNamedQueryName("Pepe");
+
+        // then
+        assertEquals(found.get(0).getNombre(), alumno.getNombre());
     }
 
 }

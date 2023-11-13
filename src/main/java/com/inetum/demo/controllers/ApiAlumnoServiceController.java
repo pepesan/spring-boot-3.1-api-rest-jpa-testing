@@ -194,7 +194,7 @@ public class ApiAlumnoServiceController {
     @PutMapping(value = "/{id}")
     public ResponseEntity<Alumno> editDatoById(
             @PathVariable("id") Long id,
-            @RequestBody AlumnoDTO dato) {
+            @Valid @RequestBody AlumnoDTO dato) {
         Optional<Alumno> alumnoOpcional = this.alumnoService.findById(id);
         alumnoOpcional.orElseThrow(() ->
                 new ResourceNotFoundException(

@@ -12,11 +12,14 @@ import java.util.List;
 
 @Repository()
 public interface AlumnoRepository extends JpaRepository<Alumno, Long> {
+    // metodo Preestablecidos
     public List<Alumno> findByNombre(String name);
     public List<Alumno> findByEdad(Integer edad);
 
+    // Métodos mediante Query (hql)
     @Query("SELECT a FROM Alumno a WHERE a.nombre = :name")
     List<Alumno> findAlumnosByName(String name);
 
+    // Uso de Named Query
     List<Alumno> searchByNamedQueryName(@Param("name") String name);
 }
