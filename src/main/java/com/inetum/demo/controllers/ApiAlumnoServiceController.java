@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -63,6 +64,44 @@ public class ApiAlumnoServiceController {
                 this.alumnoService.findAll(),
                 headers,
                 HttpStatus.OK);
+    }
+
+    // Implements a methood to search with pagination
+    @GetMapping("/search/{page}/{num}")
+    @Operation(
+            summary = "show list of alumno objects",
+            description = "Shows a list of alumno in an output array",
+            tags = { "alumno" }
+            )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successful operation",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    array = @ArraySchema(
+                                            schema = @Schema(implementation = Alumno.class)
+                                    )
+                            ),
+                            @Content(
+                                    mediaType = "application/xml",
+                                    array = @ArraySchema(schema = @Schema(implementation = Alumno.class))
+                            )
+                    })
+    })
+    public ResponseEntity<Page<Alumno>> search(
+            @PathVariable("page") int page,
+            @PathVariable("num") int num){
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            return new ResponseEntity<>(
+                    this.alumnoService.findAllPageable(page,num),
+                    headers,
+                    HttpStatus.OK);
+
+
+
     }
 
     @PostMapping("/")

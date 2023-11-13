@@ -3,6 +3,8 @@ package com.inetum.demo.services;
 import com.inetum.demo.domain.Alumno;
 import com.inetum.demo.repositories.AlumnoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,5 +36,11 @@ public class AlumnoServiceImpl implements AlumnoService{
     public Alumno remove(Alumno alumno) {
         this.alumnoRepository.delete(alumno);
         return alumno;
+    }
+
+    @Override
+    public Page<Alumno> findAllPageable(int page, int num) {
+        PageRequest pageRequest = PageRequest.of(page, num);
+        return this.alumnoRepository.findAll(pageRequest);
     }
 }
