@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -48,14 +49,21 @@ public class AlumnoRepositoryController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Alumno> show(@PathVariable Long id){
-        return ResponseEntity.ok(alumnoRepository.findById(id).get());
+        Alumno  alumno = alumnoRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException(
+                        "Not found with id = " + id
+                ));
+        return ResponseEntity.ok(alumno);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Alumno> update(
             @PathVariable Long id,
             @Valid @RequestBody AlumnoDTO alumnoDto) {
-        Alumno alumno = alumnoRepository.findById(id).get();
+        Alumno alumno = alumnoRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException(
+                        "Not found with id = " + id
+                ));
         alumno.setNombre(alumnoDto.getNombre());
         alumno.setApellidos(alumnoDto.getApellidos());
         return ResponseEntity.ok(alumnoRepository.save(alumno));
@@ -63,7 +71,10 @@ public class AlumnoRepositoryController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Alumno> delete(@PathVariable Long id){
-        Alumno alumno = alumnoRepository.findById(id).get();
+        Alumno alumno = alumnoRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException(
+                        "Not found with id = " + id
+                ));
         alumnoRepository.delete(alumno);
         return ResponseEntity.ok(alumno);  //200 OK
     }

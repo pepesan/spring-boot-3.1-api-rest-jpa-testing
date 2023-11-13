@@ -172,8 +172,7 @@ public class ApiAlumnoServiceController {
                     })
     })
     public ResponseEntity<Alumno> showDatoById(@PathVariable("id") Long id){
-        Optional<Alumno> alumnoOpcional = this.alumnoService.findById(id);
-        alumnoOpcional.orElseThrow(() ->
+        Alumno alumno = this.alumnoService.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException(
                         "Not found with id = " + id
                 ));
@@ -183,7 +182,6 @@ public class ApiAlumnoServiceController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpStatus status = HttpStatus.OK;
-        Alumno alumno = alumnoOpcional.get();
 
         return new ResponseEntity<>(
                 alumno,
@@ -195,12 +193,10 @@ public class ApiAlumnoServiceController {
     public ResponseEntity<Alumno> editDatoById(
             @PathVariable("id") Long id,
             @Valid @RequestBody AlumnoDTO dato) {
-        Optional<Alumno> alumnoOpcional = this.alumnoService.findById(id);
-        alumnoOpcional.orElseThrow(() ->
+        Alumno alumno = this.alumnoService.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException(
                         "Not found with id = " + id
                 ));
-        Alumno alumno = new Alumno(dato);
         alumno.setId(id);
         this.alumnoService.save(alumno);
         HttpHeaders headers = new HttpHeaders();
@@ -247,8 +243,7 @@ public class ApiAlumnoServiceController {
                     })
     })
     public ResponseEntity<Alumno> deleteDatoById(@PathVariable Long id){
-        Optional<Alumno> alumnoOpcional = this.alumnoService.findById(id);
-        alumnoOpcional.orElseThrow(() ->
+        Alumno alumno = this.alumnoService.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException(
                         "Not found with id = " + id
                 ));
@@ -258,7 +253,6 @@ public class ApiAlumnoServiceController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpStatus status = HttpStatus.OK;
-        Alumno alumno = alumnoOpcional.get();
         this.alumnoService.remove(alumno);
 
         return new ResponseEntity<>(
