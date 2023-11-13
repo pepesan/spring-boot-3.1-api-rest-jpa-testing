@@ -5,6 +5,7 @@ import com.inetum.demo.repositories.AlumnoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -41,8 +42,14 @@ public class AlumnoServiceImpl implements AlumnoService{
     @Override
     public Page<Alumno> findAllPageable(int page, int num) {
         PageRequest pageRequest = PageRequest.of(page, num);
-        // TODO:  añadir ordenación
-
+        // de manera ascendente dependiendo del campo nombre
+        // pageRequest.withSort(Sort.Direction.valueOf("ASC"), "nombre");
+        // otros métodos interesantes son
+        // pageRequest.withSort(Sort.by("nombre"));
+        // pageRequest.withSort(Sort.by("nombre").descending());
+        // pageRequest.withSort(Sort.by("nombre").ascending());
+        // Usando ordenación por dos campos
+        pageRequest.withSort(Sort.by("nombre").descending().and(Sort.by("edad")));
 
         return this.alumnoRepository.findAll(pageRequest);
     }
