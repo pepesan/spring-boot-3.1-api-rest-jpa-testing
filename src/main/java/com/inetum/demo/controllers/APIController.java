@@ -170,7 +170,7 @@ public class APIController {
     @PutMapping(value = "/{id}")
     public ResponseEntity<Dato> editDatoById(
             @PathVariable("id") Long id,
-            @RequestBody DatoDTO dato) {
+            @RequestBody DatoDTO datoDTO) {
         Dato d = this.listado.stream().filter(elemento ->
                 elemento.getId().equals(id)).findFirst().orElse(null);
         HttpHeaders headers = new HttpHeaders();
@@ -178,8 +178,9 @@ public class APIController {
         HttpStatus status = HttpStatus.OK;
         if (d!=null){
             int index = this.listado.indexOf(d);
-            d.setCadena(dato.getCadena());
-            this.listado.set(index, d);
+            Dato dato = new Dato(datoDTO);
+            dato.setId(id);
+            this.listado.set(index, dato);
         }else{
             status = HttpStatus.NOT_FOUND;
         }
