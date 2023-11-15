@@ -28,9 +28,4 @@ public class OneToOneController {
                 HttpStatus.OK
         );
     }
-
-
-
-
-
 }

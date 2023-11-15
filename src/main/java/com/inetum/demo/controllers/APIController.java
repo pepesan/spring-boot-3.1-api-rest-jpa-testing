@@ -176,16 +176,17 @@ public class APIController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpStatus status = HttpStatus.OK;
+        Dato dato = new Dato();
         if (d!=null){
             int index = this.listado.indexOf(d);
-            Dato dato = new Dato(datoDTO);
+            dato = new Dato(datoDTO);
             dato.setId(id);
             this.listado.set(index, dato);
         }else{
             status = HttpStatus.NOT_FOUND;
         }
         return new ResponseEntity<>(
-                d,
+                dato,
                 headers,
                 status
                 );
