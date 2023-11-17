@@ -5,6 +5,7 @@ import com.inetum.demo.domain.onetoone.Order;
 import com.inetum.demo.domain.onetoone.Phone;
 import com.inetum.demo.services.onetoone.OneToOneBidirectionalService;
 import com.inetum.demo.services.onetoone.OneToOneService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,11 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/onetoonebi/")
+@RequestMapping("/api/v1/onetoonebi")
 public class OneToOneBidirectionalController {
     OneToOneBidirectionalService oneToOneBidirectionalService;
 
-    OneToOneBidirectionalController(
+    @Autowired
+    public OneToOneBidirectionalController(
             OneToOneBidirectionalService oneToOneBidirectionalService
     ){
         this.oneToOneBidirectionalService = oneToOneBidirectionalService;

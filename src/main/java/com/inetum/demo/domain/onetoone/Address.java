@@ -26,6 +26,7 @@ public class Address {
 
     @JsonBackReference
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "order_id", referencedColumnName = "id")
+    @JoinColumn(name = "order_id",
+            referencedColumnName = "id")
     private Order order;
 }

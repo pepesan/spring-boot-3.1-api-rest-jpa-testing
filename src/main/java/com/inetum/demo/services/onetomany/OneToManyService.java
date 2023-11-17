@@ -6,6 +6,7 @@ import com.inetum.demo.repositories.onetomany.BookRepository;
 import com.inetum.demo.repositories.onetomany.GenderRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ import java.util.List;
 public class OneToManyService {
     BookRepository bookRepository;
     GenderRepository genderRepository;
+    @Autowired
     OneToManyService(BookRepository bookRepository,
     GenderRepository genderRepository){
         this.bookRepository = bookRepository;
@@ -33,6 +35,15 @@ public class OneToManyService {
         this.genderRepository.save(gender);
         Book book = new Book();
         book.setTitle("El Color de la Magia");
+        gender.getBooks().add(book);
+        this.genderRepository.save(gender);
+        book = new Book();
+        book.setTitle("Mort");
+        gender.getBooks().add(book);
+        this.genderRepository.save(gender);
+        gender = new Gender();
+        gender.setName("Medieval");
+        this.genderRepository.save(gender);
         gender.getBooks().add(book);
         this.genderRepository.save(gender);
         return this.genderRepository.findAll();

@@ -1,7 +1,9 @@
 package com.inetum.demo.controllers.manytomany;
 
-import com.inetum.demo.domain.manytomany.User;
-import com.inetum.demo.services.manytomany.ManyToManyService;
+import com.inetum.demo.domain.manytomany.Noticia;
+import com.inetum.demo.services.manytomany.ManyToManyUnidirectionalService;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,22 +14,23 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/manytomany")
-public class ManyToManyController {
+@RequestMapping("/api/v1/manytomanyuni")
+public class ManyToManyUnidirectionalController {
 
-    ManyToManyService manyToManyService;
+    private ManyToManyUnidirectionalService service;
 
     @Autowired
-    ManyToManyController(
-            ManyToManyService manyToManyService
-    ){
-        this.manyToManyService = manyToManyService;
+    public ManyToManyUnidirectionalController(
+            ManyToManyUnidirectionalService service){
+        this.service = service;
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<User>> index(){
+    public ResponseEntity<List<Noticia>> index(){
         return new ResponseEntity<>(
-                this.manyToManyService.doSomething(),
+                this.service.doSomething(),
                 HttpStatus.OK);
     }
+
+
 }

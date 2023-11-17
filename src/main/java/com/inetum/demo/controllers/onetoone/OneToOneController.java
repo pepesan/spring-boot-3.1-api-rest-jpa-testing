@@ -2,6 +2,7 @@ package com.inetum.demo.controllers.onetoone;
 
 import com.inetum.demo.domain.onetoone.Phone;
 import com.inetum.demo.services.onetoone.OneToOneService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +16,8 @@ import java.util.List;
 public class OneToOneController {
     OneToOneService oneToOneService;
 
-    OneToOneController(
+    @Autowired
+    public OneToOneController(
             OneToOneService oneToOneService
     ){
         this.oneToOneService = oneToOneService;

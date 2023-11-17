@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 })
 public class Alumno {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Size(min = 3, max = 20, message = "el nombre debe tener mas de 3 letras y menos de 20.")
     @Column(name = "name")
