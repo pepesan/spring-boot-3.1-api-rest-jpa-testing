@@ -85,7 +85,7 @@ public class APIController {
                             ),
                     })
     })
-    public Dato addDato(
+    public ResponseEntity<Dato> addDato(
             @Parameter(description = "Created user object")
             @Valid @RequestBody DatoDTO dato) {
         lastID++;
@@ -93,7 +93,7 @@ public class APIController {
         d.setId(lastID);
         d.setCadena(dato.getCadena());
         this.listado.add(d);
-        return d;
+        return ResponseEntity.ok(d);
     }
     @PostMapping("/response")
     public ResponseEntity<Dato> addDatoResponse(@Valid @RequestBody DatoDTO dato) {
