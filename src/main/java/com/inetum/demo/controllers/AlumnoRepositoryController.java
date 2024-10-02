@@ -26,8 +26,13 @@ import java.util.List;
 @RequestMapping("/api/v1/repository")
 public class AlumnoRepositoryController {
 
+    // @Autowired
+    private final AlumnoRepository alumnoRepository;
+
     @Autowired
-    private AlumnoRepository alumnoRepository;
+    public AlumnoRepositoryController(AlumnoRepository alumnoRepository){
+        this.alumnoRepository = alumnoRepository;
+    }
 
     @GetMapping("/")
     public ResponseEntity<List<Alumno>> index(){
@@ -48,32 +53,39 @@ public class AlumnoRepositoryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Alumno> show(@PathVariable Long id){
-        Alumno  alumno = alumnoRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException(
-                        "Not found with id = " + id
+    public ResponseEntity<Alumno> show(@PathVariable("id") Long id){
+        Alumno  alumno = alumnoRepository
+                .findById(id)
+                .orElseThrow(() ->
+                    new ResourceNotFoundException(
+                            "Not found with id = " + id
                 ));
         return ResponseEntity.ok(alumno);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Alumno> update(
-            @PathVariable Long id,
+            @PathVariable("id") Long id,
             @Valid @RequestBody AlumnoDTO alumnoDto) {
-        Alumno alumno = alumnoRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException(
-                        "Not found with id = " + id
+        Alumno alumno = alumnoRepository
+                .findById(id)
+                .orElseThrow(() ->
+                    new ResourceNotFoundException(
+                            "Not found with id = " + id
                 ));
         alumno.setNombre(alumnoDto.getNombre());
         alumno.setApellidos(alumnoDto.getApellidos());
+        alumno.setEdad(alumnoDto.getEdad());
         return ResponseEntity.ok(alumnoRepository.save(alumno));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Alumno> delete(@PathVariable Long id){
-        Alumno alumno = alumnoRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException(
-                        "Not found with id = " + id
+    public ResponseEntity<Alumno> delete(@PathVariable("id") Long id){
+        Alumno alumno = alumnoRepository
+                .findById(id)
+                .orElseThrow(() ->
+                    new ResourceNotFoundException(
+                            "Not found with id = " + id
                 ));
         alumnoRepository.delete(alumno);
         return ResponseEntity.ok(alumno);  //200 OK
