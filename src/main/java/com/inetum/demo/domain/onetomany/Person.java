@@ -1,5 +1,6 @@
 package com.inetum.demo.domain.onetomany;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,8 +21,10 @@ public class Person {
 
     private String name;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "person",
-            cascade = CascadeType.ALL, orphanRemoval = true)
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
     private List<Address2> addresses = new ArrayList<>();
 
 
