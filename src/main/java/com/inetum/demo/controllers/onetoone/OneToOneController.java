@@ -23,7 +23,7 @@ public class OneToOneController {
         this.oneToOneService = oneToOneService;
     }
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<List<Phone>> index(){
         return new ResponseEntity<>(
                 this.oneToOneService.doSomething(),

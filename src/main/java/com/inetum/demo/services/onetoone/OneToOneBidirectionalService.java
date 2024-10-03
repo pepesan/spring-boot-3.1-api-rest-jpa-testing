@@ -37,6 +37,7 @@ public class OneToOneBidirectionalService {
         Address address = new Address();
         address.setStreet("Plaza Mayor");
         order.setBillingAddress(address);
+        address.setOrder(order);
         this.orderRepository.save(order);
         return this.orderRepository.findAll();
     }
@@ -51,7 +52,11 @@ public class OneToOneBidirectionalService {
         Address address = new Address();
         address.setStreet("Plaza Mayor");
         order.setBillingAddress(address);
-        this.orderRepository.save(order);
-        return this.addressesRepository.findAll();
+        //this.orderRepository.save(order);
+        address.setOrder(order);
+        this.addressesRepository.save(address);
+        List<Address> listado = this.addressesRepository.findAll();
+        System.out.println(listado.getFirst().getOrder().getCode());
+        return listado;
     }
 }
