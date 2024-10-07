@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode;
 @Entity
 @PrimaryKeyJoinColumn(name = "OrdId")
 // estrategia con Joined table
-// si usamos Joined debemos activar el discrimimador
+// si usamos Single table debemos activar el discrimimador
 //@DiscriminatorValue("portatil")
 public class Portatil extends Ordenador {
     private double peso;

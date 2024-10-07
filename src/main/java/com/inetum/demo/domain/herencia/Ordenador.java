@@ -8,7 +8,7 @@ import lombok.Data;
 @Entity
 
 /*
-    Tenemos tre estrategias:
+    Tenemos tres estrategias:
     - Table per class: cada entidad tiene su propia tabla
     con los campos comunes y sus específicos
     - Joined Table: Hay una tabla por cada entidad pero
