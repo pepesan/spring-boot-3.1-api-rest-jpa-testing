@@ -168,7 +168,7 @@
 					<url>jdbc:mysql://localhost:3306/test</url> <!-- Cambia 'tu_base_de_datos' por el nombre de tu base de datos -->
 					<user>root</user>
 					<password>root</password>
-					<schemas>public</schemas> <!-- Cambia esto si usas un esquema diferente -->
+					<schemas>test</schemas> <!-- Cambia esto si usas un esquema diferente -->
 					<locations>
 						<location>filesystem:src/main/resources/db/migration</location> <!-- Ruta donde se encuentran tus scripts de migración -->
 					</locations>
