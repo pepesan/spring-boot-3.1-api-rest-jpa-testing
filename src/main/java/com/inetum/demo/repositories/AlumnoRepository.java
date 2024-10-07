@@ -15,6 +15,8 @@ public interface AlumnoRepository extends JpaRepository<Alumno, Long> {
     // metodo Preestablecidos
     public List<Alumno> findByNombre(String name);
     public List<Alumno> findByEdad(Integer edad);
+    public List<Alumno> findByApellidos(String apellidos);
+    public List<Alumno> findByApellidosAndNombre(String apellidos, String nombre);
 
     // Métodos mediante Query (hql)
     @Query("SELECT a FROM Alumno a WHERE a.nombre = :name")
