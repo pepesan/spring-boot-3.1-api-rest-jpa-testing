@@ -112,18 +112,18 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webflux</artifactId>
 		</dependency>
-<!--		<dependency>-->
-<!--			<groupId>org.flywaydb</groupId>-->
-<!--			<artifactId>flyway-core</artifactId>-->
-<!--			<version>9.15.1</version>-->
-<!--		</dependency>-->
-<!--		<dependency>-->
-<!--			<groupId>org.flywaydb</groupId>-->
-<!--			<artifactId>flyway-mysql</artifactId>-->
-<!--			<version>9.15.1</version>-->
-<!--		</dependency>-->
-	</dependencies>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+			<version>10.19.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-mysql</artifactId>
+			<version>10.19.0</version>
+		</dependency>
 
+	</dependencies>
 	<build>
 		<plugins>
 			<!--plugin>
@@ -158,6 +158,20 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.flywaydb</groupId>
+				<artifactId>flyway-maven-plugin</artifactId>
+				<version>10.19.0</version>
+				<configuration>
+					<url>jdbc:mysql://localhost:3306/test</url> <!-- Cambia 'tu_base_de_datos' por el nombre de tu base de datos -->
+					<user>root</user>
+					<password>root</password>
+					<schemas>public</schemas> <!-- Cambia esto si usas un esquema diferente -->
+					<locations>
+						<location>filesystem:src/main/resources/db/migration</location> <!-- Ruta donde se encuentran tus scripts de migración -->
+					</locations>
 				</configuration>
 			</plugin>
 		</plugins>

@@ -1,0 +1,3 @@
+use test;
+
+ALTER TABLE PERSON ADD COLUMN surname VARCHAR(255);

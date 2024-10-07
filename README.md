@@ -10,3 +10,6 @@ http://localhost:8080/swagger-ui/index.html
 
 ### Código JSON de Swagger/OpenApi
 http://localhost:8080/v3/api-docs
+
+## Ejecución de migraciones
+mvn flyway:migrate
