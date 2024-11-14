@@ -19,27 +19,29 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureMockMvc
 class AplicacionRestApplicationTests {
     // Haciendo una Injección de Dependencias del Controlador en esta clase
-// definir un atributo en la clase que se va a auto cargar
+    // definir un atributo en la clase que se va a auto cargar
     @Autowired
     private MiRestController controller;
     // prueba sobre el controlador
     @Test
     public void miRestControllerLoads() throws Exception {
-// el controlador no es null, es decir carga correctamente
+    // el controlador no es null, es decir carga correctamente
         assertNotNull(controller);
         assertThat(controller).isNotNull();
     }
     // Cargar el gestor de peticiones a la aplicación Web
-// hace una especie de Mock que carga la aplicación y hace peticioens
+    // hace una especie de Mock que carga la aplicación y hace peticiones
     @Autowired
     private MockMvc mockMvc;
     @Test
     public void shouldReturnHello() throws Exception {
         // realizar una petición
         this.mockMvc.perform(
-                // hacer un método get en la petición
+                // hacer un métódo get en la petición
                 // indicando la ruta de acceso
-                get("/"))
+                get("/")
+                // fin de la llamada a perform
+                )
                 // imprimir por pantalla el resultado
                 .andDo(print())
                 // comprobamos que el status es 200 OK

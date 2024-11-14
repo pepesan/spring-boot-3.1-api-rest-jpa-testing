@@ -7,11 +7,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import java.util.ArrayList;
 import java.util.List;
 import static
@@ -32,16 +31,14 @@ class ApiControllerTest {
     public void clearRestData() throws Exception {
         System.out.println("limpiando");
         mockMvc.perform(
-                        MockMvcRequestBuilders
-                                .get(basePath+"/clear")
+                        get(basePath+"/clear")
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
     @Test
     void testListShouldReturnOkResult() throws Exception {
         mockMvc.perform(
-                        MockMvcRequestBuilders
-                                .get(basePath+"/")
+                        get(basePath+"/")
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
@@ -49,8 +46,7 @@ class ApiControllerTest {
     void testListShouldReturnOkResultEmpty() throws Exception {
         List<Dato> listadoEsperado= new ArrayList<Dato>();
         mockMvc.perform(
-                        MockMvcRequestBuilders
-                                .get(basePath+"/")
+                        get(basePath+"/")
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 // comprobación del tipo de contenido
@@ -62,14 +58,15 @@ class ApiControllerTest {
     @Test
     void testAddShouldReturnDato() throws Exception {
         mockMvc.perform(
-                        MockMvcRequestBuilders
-                                .post(basePath+"/")
+                        // configura la petición
+                        //MockMvcRequestBuilders.
+                        post(basePath+"/")
                                 .content(asJsonString(new DatoDTO("valor")))
-                                .contentType(MediaType.APPLICATION_JSON))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(mapper.writeValueAsString(new
-                        Dato(1L,"valor"))));
+                .andExpect(content().json(asJsonString(new Dato(1L,"valor"))));
     }
     public static String asJsonString(final Object obj) {
         try {
@@ -84,8 +81,7 @@ class ApiControllerTest {
         // metemos el dato antes de consultarlo
         testAddShouldReturnDato();
         mockMvc.perform(
-                        MockMvcRequestBuilders
-                                .get(basePath+"/1")
+                        get(basePath+"/1")
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -95,8 +91,7 @@ class ApiControllerTest {
     @Test
     void testGetByIDShouldNotReturnDato() throws Exception {
         mockMvc.perform(
-                        MockMvcRequestBuilders
-                                .get(basePath+"/1")
+                       get(basePath+"/1")
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
@@ -107,8 +102,7 @@ class ApiControllerTest {
         // metemos el dato antes de consultarlo
         testAddShouldReturnDato();
         mockMvc.perform(
-                        MockMvcRequestBuilders
-                                .put(basePath+"/1")
+                        put(basePath+"/1")
                                 .content(asJsonString(new DatoDTO("valor1")))
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -119,8 +113,7 @@ class ApiControllerTest {
     @Test
     void testUpdateShouldNotReturnDato() throws Exception {
         mockMvc.perform(
-                        MockMvcRequestBuilders
-                                .put(basePath+"/1")
+                        put(basePath+"/1")
                                 .content(asJsonString(new DatoDTO("valor1")))
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
@@ -132,8 +125,7 @@ class ApiControllerTest {
         // metemos el dato antes de consultarlo
         testAddShouldReturnDato();
         mockMvc.perform(
-                        MockMvcRequestBuilders
-                                .delete(basePath+"/1")
+                        delete(basePath+"/1")
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -143,8 +135,7 @@ class ApiControllerTest {
     @Test
     void testRemoveByIDShouldNotReturnDato() throws Exception {
         mockMvc.perform(
-                        MockMvcRequestBuilders
-                                .delete(basePath+"/1")
+                        delete(basePath+"/1")
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
