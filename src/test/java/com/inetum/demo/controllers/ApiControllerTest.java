@@ -57,6 +57,7 @@ class ApiControllerTest {
 
     @Test
     void testAddShouldReturnDato() throws Exception {
+        System.out.println("añadiendo");
         mockMvc.perform(
                         // configura la petición
                         //MockMvcRequestBuilders.
@@ -82,11 +83,11 @@ class ApiControllerTest {
         testAddShouldReturnDato();
         mockMvc.perform(
                         get(basePath+"/1")
-                                .contentType(MediaType.APPLICATION_JSON))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(mapper.writeValueAsString(new
-                        Dato(1L,"valor"))));
+                .andExpect(content().json(asJsonString(new Dato(1L,"valor"))));
     }
     @Test
     void testGetByIDShouldNotReturnDato() throws Exception {
@@ -107,8 +108,7 @@ class ApiControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(mapper.writeValueAsString(new
-                        Dato(1L,"valor1"))));
+                .andExpect(content().json(asJsonString(new Dato(1L,"valor1"))));
     }
     @Test
     void testUpdateShouldNotReturnDato() throws Exception {
@@ -126,11 +126,11 @@ class ApiControllerTest {
         testAddShouldReturnDato();
         mockMvc.perform(
                         delete(basePath+"/1")
-                                .contentType(MediaType.APPLICATION_JSON))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(mapper.writeValueAsString(new
-                        Dato(1L,"valor"))));
+                .andExpect(content().json(asJsonString(new Dato(1L,"valor"))));
     }
     @Test
     void testRemoveByIDShouldNotReturnDato() throws Exception {

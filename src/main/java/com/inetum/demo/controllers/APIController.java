@@ -166,7 +166,7 @@ public class APIController {
                 headers,
                 status);
     }
-
+    // @PatchMapping(value = "/{id}")
     @PutMapping(value = "/{id}")
     public ResponseEntity<Dato> editDatoById(
             @PathVariable("id") Long id,
