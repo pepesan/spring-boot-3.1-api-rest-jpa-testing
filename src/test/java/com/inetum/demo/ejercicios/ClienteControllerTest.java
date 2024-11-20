@@ -95,6 +95,54 @@ public class ClienteControllerTest {
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
+    @Test
+    void testUpdateByIDShouldReturnOkResult() throws Exception {
+        Cliente clienteGuardado = this.clienteRepository.save(new Cliente(1L, "Pilar", "p@.com", "Madrid"));
+        System.out.println(clienteGuardado);
+        mockMvc.perform(
+                        MockMvcRequestBuilders
+                                .put(basePath+"/"+clienteGuardado.getId())
+                                .content(asJsonString(new ClienteDTO("Pilar2", "p2@p.com", "Madrid2")))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.name").value("Pilar2"))
+                .andExpect(jsonPath("$.email").value("p2@p.com"))
+                .andExpect(jsonPath("$.dir").value("Madrid2"))
+                .andExpect(jsonPath("$.id").exists());
+    }
+    @Test
+    void testUpdateByIDShouldReturnNotFoundResult() throws Exception {
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders
+                                .put(basePath+"/300")
+                                .content(asJsonString(new ClienteDTO("Pilar2", "p2@p.com", "Madrid2")))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+    @Test
+    void testDeleteByIDShouldReturnOkResult() throws Exception {
+        Cliente clienteGuardado = this.clienteRepository.save(new Cliente(1L, "Pilar", "p@.com", "Madrid"));
+        System.out.println(clienteGuardado);
+        mockMvc.perform(
+                        MockMvcRequestBuilders
+                                .delete(basePath+"/"+clienteGuardado.getId())
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+    @Test
+    void testDeleteByIDShouldReturnNotFoundResult() throws Exception {
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders
+                                .delete(basePath+"/300")
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
     public static String asJsonString(final Object obj) {
         try {
             return new ObjectMapper().writeValueAsString(obj);
