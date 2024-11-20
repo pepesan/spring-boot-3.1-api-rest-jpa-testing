@@ -55,8 +55,8 @@ public class ClienteControllerTest {
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-                //.andExpect(content().json(asJsonString(new Cliente(1L,"Pilar", "p@p.com", "Madrid"))));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(asJsonString(new Cliente(1L,"Pilar", "p@p.com", "Madrid"))));
     }
     public static String asJsonString(final Object obj) {
         try {
