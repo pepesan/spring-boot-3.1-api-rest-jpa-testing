@@ -50,8 +50,8 @@ public class AlumnoRepositoryTestContainersTest {
     void setup(){
         this.alumnoRepository.deleteAll();
         this.alumnoRepository.saveAllAndFlush(List.of(
-                new Alumno(1L, "David", "Vaquero", 45),
-                new Alumno(2L, "Nuria", "Martín", 32)
+                new Alumno(null, "David", "Vaquero", 45),
+                new Alumno(null, "Nuria", "Martín", 32)
         ));
     }
 

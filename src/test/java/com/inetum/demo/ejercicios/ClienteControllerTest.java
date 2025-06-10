@@ -76,7 +76,7 @@ public class ClienteControllerTest {
     }
     @Test
     void testGetByIDShouldReturnOkResult() throws Exception {
-        Cliente clienteGuardado = this.clienteRepository.save(new Cliente(1L, "Pilar", "p@.com", "Madrid"));
+        Cliente clienteGuardado = this.clienteRepository.save(new Cliente(null, "Pilar", "p@.com", "Madrid"));
         System.out.println(clienteGuardado);
         mockMvc.perform(
                         MockMvcRequestBuilders
@@ -97,7 +97,7 @@ public class ClienteControllerTest {
     }
     @Test
     void testUpdateByIDShouldReturnOkResult() throws Exception {
-        Cliente clienteGuardado = this.clienteRepository.save(new Cliente(1L, "Pilar", "p@.com", "Madrid"));
+        Cliente clienteGuardado = this.clienteRepository.save(new Cliente(null, "Pilar", "p@.com", "Madrid"));
         System.out.println(clienteGuardado);
         mockMvc.perform(
                         MockMvcRequestBuilders
@@ -124,7 +124,8 @@ public class ClienteControllerTest {
     }
     @Test
     void testDeleteByIDShouldReturnOkResult() throws Exception {
-        Cliente clienteGuardado = this.clienteRepository.save(new Cliente(1L, "Pilar", "p@.com", "Madrid"));
+        Cliente clienteGuardado = this.clienteRepository.save(new Cliente(
+                null, "Pilar", "p@.com", "Madrid"));
         System.out.println(clienteGuardado);
         mockMvc.perform(
                         MockMvcRequestBuilders
