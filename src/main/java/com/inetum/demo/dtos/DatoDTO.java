@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 public class DatoDTO {
     @NotNull
     @NotBlank
-    @Size(min = 4, max = 20, message = "Debe tener entre 1 y 100 chars")
+    @Size(min = 4, max = 20, message = "Debe tener entre 4 y 20 chars")
     private String cadena;
 }

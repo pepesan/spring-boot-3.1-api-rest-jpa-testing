@@ -170,7 +170,7 @@ public class APIController {
     @PutMapping(value = "/{id}")
     public ResponseEntity<Dato> editDatoById(
             @PathVariable("id") Long id,
-            @RequestBody DatoDTO datoDTO) {
+            @Valid @RequestBody DatoDTO datoDTO) {
         Dato d = this.listado.stream().filter(elemento ->
                 elemento.getId().equals(id)).findFirst().orElse(null);
         HttpHeaders headers = new HttpHeaders();
