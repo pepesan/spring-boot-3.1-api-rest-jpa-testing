@@ -1,4 +1,4 @@
-# Ejemplo de uso de Spring boot 3.3.4 con JPA H2 MVC Test API y Testing
+# Ejemplo de uso de Spring boot 3.5.0 con JPA H2 MVC Test API y Testing
 
 ## Arranque
 mvn spring-boot:run
