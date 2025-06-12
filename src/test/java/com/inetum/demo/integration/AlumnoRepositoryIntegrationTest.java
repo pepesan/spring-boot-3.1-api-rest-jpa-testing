@@ -54,7 +54,9 @@ public class AlumnoRepositoryIntegrationTest {
         List<Alumno> found = alumnoRepository.findByEdad(alumno.getEdad());
 
         // then
-        assertEquals(found.get(0).getEdad(), alumno.getEdad());
+        Alumno alumnoBBDD = found.get(0);
+        assertEquals(alumnoBBDD.getEdad(), alumno.getEdad());
+        assertEquals(alumnoBBDD.getNombre(), alumno.getNombre());
     }
 
     @Test
@@ -70,7 +72,9 @@ public class AlumnoRepositoryIntegrationTest {
         List<Alumno> found = alumnoRepository.findByNombre("Pepe");
 
         // then
-        assertEquals(found.get(0).getNombre(), alumno.getNombre());
+        Alumno alumnoBBDD = found.get(0);
+        assertEquals(alumnoBBDD.getEdad(), alumno.getEdad());
+        assertEquals(alumnoBBDD.getNombre(), alumno.getNombre());
     }
 
     @Test
@@ -86,7 +90,9 @@ public class AlumnoRepositoryIntegrationTest {
         List<Alumno> found = alumnoRepository.findAlumnosByName("Pepe");
 
         // then
-        assertEquals(found.get(0).getNombre(), alumno.getNombre());
+        Alumno alumnoBBDD = found.get(0);
+        assertEquals(alumnoBBDD.getEdad(), alumno.getEdad());
+        assertEquals(alumnoBBDD.getNombre(), alumno.getNombre());
     }
 
     @Test
@@ -102,7 +108,9 @@ public class AlumnoRepositoryIntegrationTest {
         List<Alumno> found = alumnoRepository.searchByNamedQueryName("Pepe");
 
         // then
-        assertEquals(found.get(0).getNombre(), alumno.getNombre());
+        Alumno alumnoBBDD = found.get(0);
+        assertEquals(alumnoBBDD.getEdad(), alumno.getEdad());
+        assertEquals(alumnoBBDD.getNombre(), alumno.getNombre());
     }
 
 }

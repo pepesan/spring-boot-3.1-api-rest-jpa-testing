@@ -24,7 +24,8 @@ import static org.mockito.BDDMockito.given;
 
 
 @ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
+// Define que no se deberían hacer mockeos por encima de los necesarios
+@MockitoSettings(strictness = Strictness.STRICT_STUBS)
 public class AlumnoServiceTest {
     @Mock
     private AlumnoRepository alumnoRepository;
@@ -46,22 +47,34 @@ public class AlumnoServiceTest {
     @DisplayName("Test for index method with empty list")
     @Test
     public void givenNothing_whenIndex_thenReturnListOfAlumnoObjects(){
+
+        // situación inicial
+        // configurar que el repositorio nos devuelva un valor controlado ante una llamada a un métoido
         given(alumnoRepository.findAll()).willReturn(new ArrayList<>());
+        // when
+        // hago la llamada al servicio con un valor
+        // el repositorio va a devolver lo que le hemos dicho antes
         List<Alumno> listado = this.alumnoService.findAll();
+        // comprobamos que el servicio ante una entrada específica devuelve un valor controlado
         assertEquals(new ArrayList<>(), listado);
     }
 
     @DisplayName("Test for save method")
     @Test
     public void givenAlumnoObject_whenAdd_thenReturnAlumnoObject(){
+        // configuramos el objeto que debería devolver
         alumnoOutput = new Alumno();
         alumnoOutput.setId(1L);
         alumnoOutput.setNombre("David");
         alumnoOutput.setApellidos("Vaquero");
         alumnoOutput.setEdad(44);
+        // definimos lo que el repositorio devería devolver
         given(alumnoRepository.save(alumnoInput)).willReturn(alumnoOutput);
-
+        // when
+        // hacemos la llamada al servicio
         Alumno alumno = alumnoService.save(alumnoInput);
+        // then
+        // comprobamos que el dato que nos devuelve es el esperado
         assertNotNull(alumno);
         assertEquals(alumnoOutput, alumno);
 
