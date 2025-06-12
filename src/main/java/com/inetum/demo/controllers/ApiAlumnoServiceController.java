@@ -197,7 +197,10 @@ public class ApiAlumnoServiceController {
                 new ResourceNotFoundException(
                         "Not found with id = " + id
                 ));
-        alumno.setId(id);
+        alumno.setApellidos(dato.getApellidos());
+        alumno.setNombre(dato.getNombre());
+        alumno.setEdad(dato.getEdad());
+        this.alumnoService.save(alumno);
         this.alumnoService.save(alumno);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

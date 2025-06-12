@@ -15,5 +15,5 @@ public interface AlumnoService {
 
     public Alumno remove(Alumno alumno);
 
-    Page<Alumno> findAllPageable(int page, int num);
+    public Page<Alumno> findAllPageable(int page, int num);
 }
