@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import static org.mockito.BDDMockito.willDoNothing;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,10 @@ import static org.mockito.BDDMockito.given;
 @ExtendWith(MockitoExtension.class)
 // Define que no se deberían hacer mockeos por encima de los necesarios
 @MockitoSettings(strictness = Strictness.STRICT_STUBS)
+// Ejecuta pero da avisos por consola
+// @MockitoSettings(strictness = Strictness.WARN)
+// Sin restricciones
+// @MockitoSettings(strictness = Strictness.LENIENT)
 public class AlumnoServiceTest {
     @Mock
     private AlumnoRepository alumnoRepository;
@@ -101,7 +106,7 @@ public class AlumnoServiceTest {
         alumnoOutput.setNombre("David");
         alumnoOutput.setApellidos("Vaquero");
         alumnoOutput.setEdad(44);
-        given(alumnoRepository.findById(1L)).willReturn(Optional.ofNullable(alumnoOutput));
+        // given(alumnoRepository.findById(1L)).willReturn(Optional.ofNullable(alumnoOutput));
         given(alumnoRepository.save(alumnoOutput)).willReturn(alumnoOutput);
         Alumno optionalAlumno = this.alumnoService.save( alumnoInput);
         assertEquals(alumnoOutput, optionalAlumno);
@@ -115,7 +120,8 @@ public class AlumnoServiceTest {
         alumnoOutput.setNombre("David");
         alumnoOutput.setApellidos("Vaquero");
         alumnoOutput.setEdad(44);
-        given(alumnoRepository.findById(1L)).willReturn(Optional.ofNullable(alumnoOutput));
+        willDoNothing()
+                .given(alumnoRepository).delete(alumnoOutput);
         Alumno alumno = this.alumnoService.remove(alumnoInput);
         assertEquals(alumnoOutput, alumno);
     }
