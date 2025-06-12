@@ -18,6 +18,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DataJpaTest
+// Para que use la config del fichero de propiedades e pruebas
+// @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class AlumnoRepositoryIntegrationTest {
     @Autowired
     private TestEntityManager testEntityManager;
