@@ -41,7 +41,8 @@ public class OneToOneBidirectionalController {
         "code": "H0ck",
         "billingAddress": {
           "id": 1,
-          "street": "Plaza Mayor"
+          "street": "Plaza Mayor",
+          "order": 1
         }
       }
     ]
@@ -58,7 +59,12 @@ public class OneToOneBidirectionalController {
     [
       {
         "id": 2,
-        "street": "Plaza Mayor"
+        "street": "Plaza Mayor",
+        "order": {
+          "id": 2,
+          "code": "H0ck",
+          "billingAddress": 2
+        }
       }
     ]
  */
