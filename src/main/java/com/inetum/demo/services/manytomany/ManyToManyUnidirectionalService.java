@@ -4,6 +4,7 @@ import com.inetum.demo.domain.manytomany.Etiqueta;
 import com.inetum.demo.domain.manytomany.Noticia;
 import com.inetum.demo.repositories.manytomany.EtiquetaRepository;
 import com.inetum.demo.repositories.manytomany.NoticiaRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +23,7 @@ public class ManyToManyUnidirectionalService {
         this.noticiaRepository = noticiaRepository;
 
     }
-
+    @Transactional
     public List<Noticia> doSomething(){
         Noticia noticia = new Noticia();
         noticia.setTitulo("Noticia 1");

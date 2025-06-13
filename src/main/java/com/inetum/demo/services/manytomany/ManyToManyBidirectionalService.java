@@ -4,13 +4,17 @@ import com.inetum.demo.domain.manytomany.Role;
 import com.inetum.demo.domain.manytomany.User;
 import com.inetum.demo.repositories.manytomany.RoleRepository;
 import com.inetum.demo.repositories.manytomany.UserRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Slf4j
 public class ManyToManyBidirectionalService {
     UserRepository userRepository;
     RoleRepository roleRepository;
@@ -26,19 +30,11 @@ public class ManyToManyBidirectionalService {
 
     @Transactional
     public void deleteAll() {
-        // eliminate all the references to the roles
-        this.userRepository.findAll().stream()
-                .forEach(user -> {
-                    user.getRoles().clear();
-                    this.userRepository.save(user);
-                });
-        this.roleRepository.findAll().stream()
-                .forEach(role -> {
-                    role.getUsers().clear();
-                    this.roleRepository.save(role);
-                });
+        // ejecuta directamente el DELETE en la tabla de relación
+        userRepository.deleteAllUserRoles();
     }
 
+    @Transactional
     public List<User> doSomething() {
         this.deleteAll();
         User user = new User();
@@ -51,6 +47,8 @@ public class ManyToManyBidirectionalService {
         this.userRepository.save(user);
         return this.userRepository.findAll();
     }
+
+    @Transactional
     public List<Role> doSomethingRoles() {
         this.deleteAll();
         User user = new User();

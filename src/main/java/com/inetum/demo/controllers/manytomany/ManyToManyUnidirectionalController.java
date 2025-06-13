@@ -31,6 +31,21 @@ public class ManyToManyUnidirectionalController {
                 this.service.doSomething(),
                 HttpStatus.OK);
     }
+    /*
+    Respuesta JSON
+    [
+      {
+        "id": 1,
+        "titulo": "Noticia 1",
+        "etiquetas": [
+          {
+            "id": 1,
+            "nombre": "Etiqueta 1"
+          }
+        ]
+      }
+    ]
+     */
 
 
 }
