@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/onetoone/")
+@RequestMapping("/api/v1/onetoone")
 public class OneToOneController {
     OneToOneService oneToOneService;
 
@@ -23,11 +23,43 @@ public class OneToOneController {
         this.oneToOneService = oneToOneService;
     }
 
-    @GetMapping
+    @GetMapping("/")
     public ResponseEntity<List<Phone>> index(){
         return new ResponseEntity<>(
                 this.oneToOneService.doSomething(),
                 HttpStatus.OK
         );
     }
+    /*
+        Respuesta JSON
+        [
+          {
+            "id": 1,
+            "number": "923124578",
+            "details": {
+              "id": 1,
+              "provider": "PepePhone",
+              "technology": "5G"
+            }
+          }
+        ]
+     */
+    @GetMapping("/provider")
+    public ResponseEntity<List<Phone>> getPepephone(){
+        return ResponseEntity.ok(this.oneToOneService.listado());
+    }
+    /*
+        [
+          {
+            "id": 1,
+            "number": "923124578",
+            "details": {
+              "id": 1,
+              "provider": "PepePhone",
+              "technology": "5G"
+            }
+          }
+        ]
+     */
+
 }

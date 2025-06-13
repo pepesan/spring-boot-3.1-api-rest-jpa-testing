@@ -33,6 +33,19 @@ public class OneToOneBidirectionalController {
                 HttpStatus.OK
         );
     }
+    /*
+    Respuesta JSON
+    [
+      {
+        "id": 1,
+        "code": "H0ck",
+        "billingAddress": {
+          "id": 1,
+          "street": "Plaza Mayor"
+        }
+      }
+    ]
+     */
     @GetMapping("/address")
     public ResponseEntity<List<Address>> indexAddress(){
         return new ResponseEntity<>(
@@ -40,7 +53,15 @@ public class OneToOneBidirectionalController {
                 HttpStatus.OK
         );
     }
-
+/*
+    Respuesta JSON
+    [
+      {
+        "id": 2,
+        "street": "Plaza Mayor"
+      }
+    ]
+ */
 
 
 

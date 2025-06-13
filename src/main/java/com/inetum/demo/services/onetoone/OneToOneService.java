@@ -37,4 +37,8 @@ public class OneToOneService {
         this.phoneRepository.save(phone);
         return this.phoneRepository.findAll();
     }
+
+    public List<Phone> listado(){
+        return this.phoneRepository.findPhonesByDetails_Provider("PepePhone");
+    }
 }
