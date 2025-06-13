@@ -41,4 +41,11 @@ public class OneToManyBiService {
         this.personRepository.save(p);
         return this.personRepository.findAll();
     }
+
+    @Transactional
+    public List<Address2> doSomething2() {
+        return this.address2Repository.findAll();
+    }
+
+
 }

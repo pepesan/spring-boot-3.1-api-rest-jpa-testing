@@ -27,4 +27,32 @@ public class OneToManyController {
                 this.oneToManyService.doSomething(),
                 HttpStatus.OK);
     }
+    /*
+    [
+      {
+        "id": 1,
+        "name": "Fantasía",
+        "books": [
+          {
+            "id": 2,
+            "title": "Mort"
+          },
+          {
+            "id": 1,
+            "title": "El Color de la Magia"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "Medieval",
+        "books": [
+          {
+            "id": 3,
+            "title": "Mort"
+          }
+        ]
+      }
+    ]
+     */
 }

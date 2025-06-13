@@ -1,6 +1,9 @@
 package com.inetum.demo.domain.onetomany;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,6 +16,8 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Person {
 
     @Id
@@ -21,7 +26,7 @@ public class Person {
 
     private String name;
 
-    @JsonManagedReference
+    // @JsonManagedReference
     @OneToMany(mappedBy = "person",
             cascade = CascadeType.ALL,
             orphanRemoval = true)
