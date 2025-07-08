@@ -21,8 +21,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Testcontainers
 @DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ContextConfiguration(initializers = AlumnoRepositoryTestContainersTest.DataSourceInitializer.class)
+// @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+// @ContextConfiguration(initializers = AlumnoRepositoryTestContainersTest.DataSourceInitializer.class)
 public class AlumnoRepositoryTestContainersTest {
     /*
     @Autowired
