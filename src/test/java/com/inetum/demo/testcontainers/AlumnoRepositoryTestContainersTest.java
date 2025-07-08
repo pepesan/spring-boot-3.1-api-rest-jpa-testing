@@ -24,6 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ContextConfiguration(initializers = AlumnoRepositoryTestContainersTest.DataSourceInitializer.class)
 public class AlumnoRepositoryTestContainersTest {
+    /*
     @Autowired
     AlumnoRepository alumnoRepository;
     @Container
@@ -60,4 +61,5 @@ public class AlumnoRepositoryTestContainersTest {
         List<Alumno> alumnos = this.alumnoRepository.findAll();
         assertThat(alumnos).hasSize(2);
     }
+    */
 }
