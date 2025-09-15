@@ -101,6 +101,7 @@ public class HttpRequestTest {
                 .block(); // Espera la respuesta síncronamente
 
         // Verificar que la respuesta del servidor sea exitosa (código 2xx)
+        assertNotNull(responseEntity);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 
         // Puedes verificar más cosas según tus necesidades, por ejemplo, el contenido de la respuesta
