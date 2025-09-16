@@ -148,7 +148,9 @@ public class APIController {
                             )
                     })
     })
-    public ResponseEntity<Dato> showDatoById(@PathVariable("id") Long id){
+    public ResponseEntity<Dato> showDatoById(
+            @Parameter(description = "object id ")
+            @PathVariable("id") Long id){
         Dato d = this.listado
                 .stream()
                 .filter(dato -> dato.getId().equals(id))

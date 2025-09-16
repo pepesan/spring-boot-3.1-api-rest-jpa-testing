@@ -33,17 +33,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
         ),
         servers = {
                 @Server(
-                        url = "https://localhost:8080/",
+                        url = "http://localhost:8080/",
                         description = "Servidor de pruebas"
                 ),
                 @Server(
                         url = "https://staging.ejemplo.com/v2",
                         description = "Servidor de produccion"
                 )
-        },
-        tags = {
-                @Tag(name = "rest", description = "Operaciones relacionadas con un api rest simple"),
-                @Tag(name = "dato", description = "Gestión de datos , así en general")
         },
         externalDocs = @ExternalDocumentation(
                 description = "Documentación completa",
