@@ -5,6 +5,7 @@ import com.inetum.demo.dtos.AlumnoDTO;
 import com.inetum.demo.services.AlumnoServiceMapper;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,7 +22,7 @@ public class ApiAlumnoServiceMapperController {
 
 
     @Autowired
-    ApiAlumnoServiceMapperController (AlumnoServiceMapper alumnoService){
+    ApiAlumnoServiceMapperController (@Qualifier("alumnoServiceMapperImpl") AlumnoServiceMapper alumnoService){
         this.alumnoService = alumnoService;
     }
 
