@@ -17,9 +17,12 @@ import java.util.List;
 public class AlumnoServiceMapperImpl implements AlumnoServiceMapper{
 
     private AlumnoRepository alumnoRepository;
+    private final AlumnoMapper mapper;
+
     @Autowired
-    AlumnoServiceMapperImpl(AlumnoRepository alumnoRepository){
-        this.alumnoRepository = alumnoRepository;
+    public AlumnoServiceMapperImpl(AlumnoRepository repo, AlumnoMapper mapper) {
+        this.alumnoRepository = repo;
+        this.mapper = mapper;
     }
 
 
@@ -27,20 +30,21 @@ public class AlumnoServiceMapperImpl implements AlumnoServiceMapper{
         return this.alumnoRepository.findAll();
     }
 
-    public Alumno save(AlumnoDTO alumnoDTO) {
-        Alumno alumno = AlumnoMapper.INSTANCE.toEntity(alumnoDTO);
-        this.alumnoRepository.save(alumno);
-        return alumno;
+    @Override
+    public Alumno save(AlumnoDTO dto) {
+        Alumno entity = mapper.toEntity(dto);
+        return alumnoRepository.save(entity);
     }
-    public Alumno update(AlumnoDTO alumnoDTO, Long id) {
-        Alumno alumno = this.alumnoRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException(
-                        "Not found with id = " + id
-                ));
-        Alumno entidad = AlumnoMapper.INSTANCE.toEntity(alumnoDTO);
-        alumno.setId(id);
-        this.alumnoRepository.save(entidad);
-        return alumno;
+    @Override
+    public Alumno update(AlumnoDTO dto, Long id) {
+        Alumno existente = alumnoRepository.findById(id).orElseThrow();
+
+        // Copia explícita de campos desde el DTO (no hay id en el DTO)
+        existente.setNombre(dto.getNombre());
+        existente.setApellidos(dto.getApellidos());
+        existente.setEdad(dto.getEdad());
+
+        return alumnoRepository.save(existente);
     }
 
     public Alumno findById(Long id) {

@@ -5,7 +5,7 @@ import com.inetum.demo.dtos.AlumnoDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface AlumnoMapper {
     AlumnoMapper INSTANCE = Mappers.getMapper(AlumnoMapper.class);
 

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
+
 public interface AlumnoServiceMapper {
     public List<Alumno> findAll();
     public Alumno save(AlumnoDTO alumno);
