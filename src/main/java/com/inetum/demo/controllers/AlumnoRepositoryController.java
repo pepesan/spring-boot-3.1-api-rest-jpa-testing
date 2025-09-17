@@ -2,15 +2,8 @@ package com.inetum.demo.controllers;
 
 import com.inetum.demo.domain.Alumno;
 import com.inetum.demo.dtos.AlumnoDTO;
-import com.inetum.demo.dtos.Dato;
-import com.inetum.demo.dtos.DatoDTO;
+import com.inetum.demo.dtos.PageResponse;
 import com.inetum.demo.repositories.AlumnoRepository;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -19,6 +12,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+
 
 import java.util.List;
 
@@ -43,6 +41,24 @@ public class AlumnoRepositoryController {
                 headers,
                 HttpStatus.OK);
 
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<PageResponse<Alumno>> search(
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
+
+        int safePage = Math.max(page, 1) - 1;                 // 1-based -> 0-based
+        int safeSize = Math.min(Math.max(size, 1), 100);      // cap 100
+        Pageable pageable = PageRequest.of(safePage, safeSize, Sort.by("id").ascending());
+
+        Page<Alumno> pageResult = alumnoRepository.findAll(pageable);
+        PageResponse<Alumno> body = PageResponse.from(pageResult);
+
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(body);
     }
 
     @PostMapping("/")
