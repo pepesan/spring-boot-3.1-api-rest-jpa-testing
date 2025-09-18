@@ -2,13 +2,19 @@ package com.inetum.demo.mappers;
 
 import com.inetum.demo.domain.Alumno;
 import com.inetum.demo.dtos.AlumnoDTO;
-import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
 
-@Mapper(componentModel = "spring")
-public interface AlumnoMapper {
-    AlumnoMapper INSTANCE = Mappers.getMapper(AlumnoMapper.class);
+@Service
+public class AlumnoMapper {
+    private final ModelMapper modelMapper = new ModelMapper();
 
-    AlumnoDTO toDto(Alumno alumno);
-    Alumno toEntity(AlumnoDTO alumnoDTO);
+    public AlumnoDTO toDto(Alumno alumno) {
+        return modelMapper.map(alumno, AlumnoDTO.class);
+    }
+
+    public Alumno toEntity(AlumnoDTO dto) {
+        return modelMapper.map(dto, Alumno.class);
+    }
 }
+

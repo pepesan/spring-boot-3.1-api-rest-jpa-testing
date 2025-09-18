@@ -135,9 +135,6 @@ class AlumnoServiceMapperTest {
         BDDMockito.willAnswer(inv -> inv.getArgument(0))
                 .given(alumnoRepository).save(ArgumentMatchers.any(Alumno.class));
 
-        // ❌ No stubeamos el mapper aquí, asumiendo que update no lo usa.
-        // Si tu implementación de update SÍ usa el mapper para crear un "parcial",
-        // añade un stub equivalente y un verify(alumnoMapper).toEntity(dtoValido).
 
         Alumno actualizado = alumnoService.update(dtoValido, 1L);
 
