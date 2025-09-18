@@ -34,6 +34,11 @@ public class ManyToManyBidirectionalService {
         userRepository.deleteAllUserRoles();
     }
 
+
+    public List<User> listado() {
+        return this.userRepository.findAll();
+    }
+
     @Transactional
     public List<User> doSomething() {
         this.deleteAll();
@@ -59,6 +64,10 @@ public class ManyToManyBidirectionalService {
         this.roleRepository.save(role);
         user.getRoles().add(role);
         this.userRepository.save(user);
+        return this.roleRepository.findAll();
+    }
+
+    public List<Role> listadoRoles() {
         return this.roleRepository.findAll();
     }
 }

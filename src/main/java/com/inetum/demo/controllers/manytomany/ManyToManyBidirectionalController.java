@@ -48,8 +48,19 @@ public class ManyToManyBidirectionalController {
      */
     @GetMapping("/roles")
     public ResponseEntity<List<Role>> indexRoles(){
-        return new ResponseEntity<>(
-                this.manyToManyService.doSomethingRoles(),
-                HttpStatus.OK);
+        List<Role> roles = this.manyToManyService.doSomethingRoles();
+        return new ResponseEntity<>(roles, HttpStatus.OK);
+    }
+
+    @GetMapping("/listado")
+    public ResponseEntity<List<User>> listado(){
+
+        return new ResponseEntity<>(this.manyToManyService.listado(), HttpStatus.OK);
+    }
+
+    @GetMapping("/listadoRoles")
+    public ResponseEntity<List<Role>> listadoRoles(){
+
+        return new ResponseEntity<>(this.manyToManyService.listadoRoles(), HttpStatus.OK);
     }
 }
