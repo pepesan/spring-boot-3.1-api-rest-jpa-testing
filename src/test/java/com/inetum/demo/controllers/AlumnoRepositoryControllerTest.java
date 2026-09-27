@@ -1,7 +1,7 @@
 package com.inetum.demo.controllers;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import com.inetum.demo.domain.Alumno;
 import com.inetum.demo.dtos.AlumnoDTO;
 import com.inetum.demo.repositories.AlumnoRepository;
@@ -30,7 +30,7 @@ public class AlumnoRepositoryControllerTest {
     @Autowired
     MockMvc mockMvc;
     @Autowired
-    ObjectMapper mapper;
+    JsonMapper mapper;
     public String basePath = "/api/v1/repository";
 
     @Autowired

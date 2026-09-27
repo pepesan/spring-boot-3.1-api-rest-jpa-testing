@@ -1,7 +1,7 @@
 package com.inetum.demo.controllers;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import com.inetum.demo.repositories.AlumnoRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class AlumnoServiceMapperControllerTest {
     @Autowired
     MockMvc mockMvc;
     @Autowired
-    ObjectMapper mapper;
+    JsonMapper mapper;
     public String basePath = "/api/v1/alumnomapper";
 
     @MockitoBean

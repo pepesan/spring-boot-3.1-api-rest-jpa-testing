@@ -41,15 +41,9 @@ public class AlumnoServiceImpl implements AlumnoService{
 
     @Override
     public Page<Alumno> findAllPageable(int page, int num) {
-        PageRequest pageRequest = PageRequest.of(page, num);
-        // de manera ascendente dependiendo del campo nombre
-        // pageRequest.withSort(Sort.Direction.valueOf("ASC"), "nombre");
-        // otros métodos interesantes son
-        // pageRequest.withSort(Sort.by("nombre"));
-        // pageRequest.withSort(Sort.by("nombre").descending());
-        // pageRequest.withSort(Sort.by("nombre").ascending());
-        // Usando ordenación por dos campos
-        pageRequest.withSort(Sort.by("nombre").descending().and(Sort.by("edad")));
+        // PageRequest es inmutable: withSort(...) devuelve una instancia nueva, hay que recogerla.
+        PageRequest pageRequest = PageRequest.of(page, num)
+                .withSort(Sort.by("nombre").descending().and(Sort.by("edad")));
 
         return this.alumnoRepository.findAll(pageRequest);
     }

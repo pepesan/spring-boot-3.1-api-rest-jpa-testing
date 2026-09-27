@@ -1,6 +1,6 @@
 package com.inetum.demo.ejercicios;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class ClienteControllerTest {
     @Autowired
     MockMvc mockMvc;
     @Autowired
-    ObjectMapper mapper;
+    JsonMapper mapper;
     public String basePath = "/api/v1/cliente";
     @Autowired
     private ClienteRepository clienteRepository;
@@ -146,7 +146,7 @@ public class ClienteControllerTest {
     }
     public static String asJsonString(final Object obj) {
         try {
-            return new ObjectMapper().writeValueAsString(obj);
+            return new JsonMapper().writeValueAsString(obj);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

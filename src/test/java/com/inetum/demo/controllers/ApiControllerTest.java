@@ -1,6 +1,6 @@
 package com.inetum.demo.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import com.inetum.demo.dtos.Dato;
 import com.inetum.demo.dtos.DatoDTO;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +21,7 @@ class ApiControllerTest {
     @Autowired
     MockMvc mockMvc;
     @Autowired
-    ObjectMapper mapper;
+    JsonMapper mapper;
     public String basePath = "/api/v1/dato";
 
     @Autowired
@@ -71,7 +71,7 @@ class ApiControllerTest {
     }
     public static String asJsonString(final Object obj) {
         try {
-            return new ObjectMapper().writeValueAsString(obj);
+            return new JsonMapper().writeValueAsString(obj);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

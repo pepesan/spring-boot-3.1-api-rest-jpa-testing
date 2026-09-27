@@ -1,6 +1,6 @@
 package com.inetum.demo.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import com.inetum.demo.dtos.Dato;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ public class MiApiDatoControllerTest {
     @Autowired
     MockMvc mockMvc;
     @Autowired
-    ObjectMapper mapper;
+    JsonMapper mapper;
     public String basePath = "/api/dato";
 
     @BeforeEach
@@ -69,7 +69,7 @@ public class MiApiDatoControllerTest {
 
     public static String asJsonString(final Object obj) {
         try {
-            return new ObjectMapper().writeValueAsString(obj);
+            return new JsonMapper().writeValueAsString(obj);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -115,5 +115,15 @@ public class MiApiDatoControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(mapper.writeValueAsString(new
                         Dato(1L,"valor"))));
+    }
+
+    @Test
+    void testRemoveByIDShouldReturnEmptyDatoWhenNotFound() throws Exception {
+        mockMvc.perform(
+                        MockMvcRequestBuilders
+                                .delete(basePath + "/999")
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(mapper.writeValueAsString(new Dato())));
     }
 }

@@ -16,16 +16,38 @@
 	<name>demo</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
-		<!-- Compilar con JDK 25 falla: Lombok (incluso en su última versión publicada, 1.18.48)
-		     todavía no soporta JDK 25 como compilador host y no genera getters/setters/constructores,
-		     lo que rompe la compilación en todo el proyecto sin errores de Lombok explícitos (solo
-		     "cannot find symbol" sobre métodos generados). Usar JDK 21 (LTS) hasta que Lombok publique
-		     soporte para JDK 25; entonces subir este valor a 25. -->
-		<java.version>21</java.version>
+		<java.version>25</java.version>
 		<spring-boot.version>4.1.1</spring-boot.version>
 		<testcontainers.version>2.0.5</testcontainers.version>
 		<flyway.version>12.4.0</flyway.version>
+		<lombok.version>1.18.46</lombok.version>
+		<jacoco.version>0.8.15</jacoco.version>
+		<maven-surefire-report-plugin.version>3.5.6</maven-surefire-report-plugin.version>
+		<sonar-maven-plugin.version>5.8.0.7211</sonar-maven-plugin.version>
+		<spotbugs-maven-plugin.version>4.10.4.1</spotbugs-maven-plugin.version>
+		<cucumber.version>8.0.2</cucumber.version>
+		<!-- Clave de proyecto en SonarQube/SonarCloud. sonar.host.url y sonar.token NUNCA se fijan
+		     aquí (son secretos/endpoints de servidor real): se pasan como propiedades -Dsonar.host.url
+		     y -Dsonar.token al ejecutar scripts/sonar-scan.sh, tomadas de variables de entorno. -->
+		<sonar.projectKey>pepesan_spring-boot-3.1-api-rest-jpa-testing</sonar.projectKey>
+		<sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 	</properties>
+	<!-- Cucumber 8.0.2 fija sus módulos internos (formatters, gherkin, messages...) con rangos de
+	     versión que no solapan entre sí si se fija <version> por dependencia: mvn falla con
+	     "Could not resolve version conflict" sobre io.cucumber:messages. El BOM oficial resuelve
+	     esas versiones de forma coherente entre todos los artefactos io.cucumber:*; por eso las
+	     dependencias de Cucumber de abajo NO llevan <version> propia. Ver CUCUMBER.md. -->
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>io.cucumber</groupId>
+				<artifactId>cucumber-bom</artifactId>
+				<version>${cucumber.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -40,17 +62,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-rest</artifactId>
-			<version>${spring-boot.version}</version>
-		</dependency>
-		<!-- Spring Boot 4 autoconfigura por defecto Jackson 3 (paquete tools.jackson), que expone
-		     un JsonMapper y no un bean com.fasterxml.jackson.databind.ObjectMapper. Este proyecto usa
-		     Jackson 2 clásico (anotaciones @JsonBackReference/@JsonManagedReference, ObjectMapper en
-		     tests/controladores), así que se añade el módulo de compatibilidad spring-boot-jackson2
-		     para seguir teniendo ese bean autoconfigurado. Migrar a Jackson 3 (tools.jackson) sería
-		     un cambio de más calado, fuera del alcance de esta actualización. -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-jackson2</artifactId>
 			<version>${spring-boot.version}</version>
 		</dependency>
         <dependency>
@@ -111,7 +122,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.46</version>
+			<version>${lombok.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<!-- La app no usa Spring Security: se excluye spring-boot-security-test para que
@@ -206,6 +217,30 @@
 			<version>${flyway.version}</version>
 		</dependency>
 
+		<!-- Cucumber-JVM: pruebas de aceptación en Gherkin (ver src/test/resources/features
+		     y com.inetum.demo.cucumber). Se ejecutan solas con `mvn test`: cucumber-junit-platform-engine
+		     se registra como motor de JUnit Platform y Surefire lo detecta automáticamente. -->
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-java</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-spring</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-junit-platform-engine</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.platform</groupId>
+			<artifactId>junit-platform-suite</artifactId>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<plugins>
@@ -227,6 +262,49 @@
 					</execution>
 				</executions>
 			</plugin-->
+			<!-- Necesario en JDK 25: el descubrimiento IMPLÍCITO de anotaciones (dejar que javac
+			     escanee el classpath de compilación buscando procesadores, que es lo que pasa si no
+			     se declara este bloque) falla silenciosamente en JDK 25 con Lombok — no da ningún
+			     error de Lombok, sencillamente no genera getters/setters/constructores, y compila con
+			     errores "cannot find symbol" en todo el proyecto sobre esos métodos. No es una
+			     incompatibilidad de Lombok con JDK 25 (con `javac` puro, sin Maven, funciona perfecto);
+			     es específico de cómo maven-compiler-plugin resuelve el processor path. Declarando el
+			     path EXPLÍCITAMENTE aquí (que usa una carga de clases distinta, aislada) funciona en
+			     cualquier JDK, incluido 21. -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>default-compile</id>
+						<phase>compile</phase>
+						<goals><goal>compile</goal></goals>
+						<configuration>
+							<annotationProcessorPaths>
+								<path>
+									<groupId>org.projectlombok</groupId>
+									<artifactId>lombok</artifactId>
+									<version>${lombok.version}</version>
+								</path>
+							</annotationProcessorPaths>
+						</configuration>
+					</execution>
+					<execution>
+						<id>default-testCompile</id>
+						<phase>test-compile</phase>
+						<goals><goal>testCompile</goal></goals>
+						<configuration>
+							<annotationProcessorPaths>
+								<path>
+									<groupId>org.projectlombok</groupId>
+									<artifactId>lombok</artifactId>
+									<version>${lombok.version}</version>
+								</path>
+							</annotationProcessorPaths>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.graalvm.buildtools</groupId>
 				<artifactId>native-maven-plugin</artifactId>
@@ -258,6 +336,101 @@
 						<location>filesystem:src/main/resources/db/migration</location> <!-- Ruta donde se encuentran tus scripts de migración -->
 					</locations>
 				</configuration>
+			</plugin>
+			<!-- Cobertura de código: agente JaCoCo durante los tests y, tras ellos,
+			     informe en target/site/jacoco (index.html, jacoco.xml, jacoco.csv). -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco.version}</version>
+				<executions>
+					<execution>
+						<id>jacoco-prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>jacoco-report</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+							<formats>
+								<format>XML</format>
+								<format>HTML</format>
+								<format>CSV</format>
+							</formats>
+						</configuration>
+					</execution>
+					<!-- Gate de cobertura: mvn verify falla si baja del 80% de líneas o de ramas (global). -->
+					<execution>
+						<id>jacoco-check</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<rule>
+									<element>BUNDLE</element>
+									<limits>
+										<limit>
+											<counter>LINE</counter>
+											<value>COVEREDRATIO</value>
+											<minimum>0.80</minimum>
+										</limit>
+										<limit>
+											<counter>BRANCH</counter>
+											<value>COVEREDRATIO</value>
+											<minimum>0.80</minimum>
+										</limit>
+									</limits>
+								</rule>
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Análisis estático (bugs de patrón: null-deref, resource leaks, etc.), en XML y HTML
+			     en target/spotbugs*.{xml,html}. Los hallazgos ya triados (spotbugs-exclude.xml) están
+			     excluidos, así que `check` sí puede ser gate bloqueante: cualquier hallazgo nuevo hace
+			     fallar `mvn verify`. -->
+			<plugin>
+				<groupId>com.github.spotbugs</groupId>
+				<artifactId>spotbugs-maven-plugin</artifactId>
+				<version>${spotbugs-maven-plugin.version}</version>
+				<configuration>
+					<effort>Max</effort>
+					<threshold>Medium</threshold>
+					<xmlOutput>true</xmlOutput>
+					<excludeFilterFile>${project.basedir}/spotbugs-exclude.xml</excludeFilterFile>
+				</configuration>
+				<executions>
+					<execution>
+						<id>spotbugs-check</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Informe HTML de los resultados de test (a partir del XML JUnit que ya genera
+			     Surefire en target/surefire-reports): se invoca con
+			     `mvn surefire-report:report-only`, ver scripts/run-coverage.sh. -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>${maven-surefire-report-plugin.version}</version>
+			</plugin>
+			<!-- Análisis SonarQube/SonarCloud: se invoca con `mvn verify sonar:sonar`
+			     (ver scripts/sonar-scan.sh), nunca con host/token fijados aquí. -->
+			<plugin>
+				<groupId>org.sonarsource.scanner.maven</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>${sonar-maven-plugin.version}</version>
 			</plugin>
 		</plugins>
 	</build>

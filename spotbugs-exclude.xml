@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Hallazgos de SpotBugs revisados y aceptados a propósito (triados en sesión de
+  actualización a Spring Boot 4.1.1): bad practice de bajo riesgo en código de
+  demo, o patrones estándar de Spring (inyección de dependencias) que SpotBugs
+  marca por defecto sin que aplique una corrección real. Los 2 hallazgos de
+  CORRECTNESS (RV_RETURN_VALUE_IGNORED sobre PageRequest.withSort en
+  AlumnoServiceImpl/AlumnoServiceMapperImpl) SÍ eran bugs reales y se
+  corrigieron en el código, no se excluyen aquí.
+-->
+<FindBugsFilter>
+    <!-- Campos públicos y mutables en controladores de demo (nadie fuera de la propia
+         clase los usa); cambiarlos a privados sin más no aporta nada real aquí. -->
+    <Match>
+        <Class name="com.inetum.demo.controllers.APIController"/>
+        <Field name="lastID"/>
+        <Bug pattern="PA_PUBLIC_PRIMITIVE_ATTRIBUTE"/>
+    </Match>
+    <Match>
+        <Class name="com.inetum.demo.controllers.MiApiDatoController"/>
+        <Or>
+            <Field name="lastID"/>
+            <Field name="listado"/>
+        </Or>
+        <Bug pattern="PA_PUBLIC_PRIMITIVE_ATTRIBUTE"/>
+    </Match>
+
+    <!-- DTO de solo lectura que envuelve el contenido de una Page: no hay ningún llamador
+         real que reutilice la lista original tras construir el PageResponse. -->
+    <Match>
+        <Class name="com.inetum.demo.dtos.PageResponse"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- Patrón estándar de inyección de dependencias de Spring (constructor con
+         @Autowired guardando el service): no existe una "copia defensiva" razonable
+         de un bean de servicio, y todos los demás controladores del proyecto hacen
+         exactamente lo mismo sin que SpotBugs los marque. -->
+    <Match>
+        <Class name="com.inetum.demo.ejercicios.ClienteController"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+</FindBugsFilter>
