@@ -35,3 +35,6 @@ build/
 ## Database h2
 demo.mv.db
 demo.trace.db
+
+## Planes de trabajo locales (no versionados)
+PLAN.md
