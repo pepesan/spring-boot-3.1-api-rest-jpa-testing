@@ -43,8 +43,8 @@ public class MiApiDatoController {
             @RequestBody Dato dato) {
         Dato d = this.listado.stream().filter(elemento ->
                 elemento.getId().equals(id)).findFirst().orElse(null);
-        if (dato!=null){
-            int index = this.listado.indexOf(d);
+        int index = this.listado.indexOf(d);
+        if (d!=null && index!=-1){
             dato.setId(id);
             this.listado.set(index, dato);
             return dato;

@@ -179,8 +179,8 @@ public class APIController {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpStatus status = HttpStatus.OK;
         Dato dato = new Dato();
-        if (d!=null){
-            int index = this.listado.indexOf(d);
+        int index = this.listado.indexOf(d);
+        if (d!=null && index!=-1){
             dato = new Dato(datoDTO);
             dato.setId(id);
             this.listado.set(index, dato);
