@@ -14,9 +14,9 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class Dato implements Serializable {
     private Long id;
-    @NotNull
-    @NotBlank
-    @Size(min = 4, max = 20, message = "Debe tener entre 1 y 100 chars")
+    @NotNull(message = "No puede ser nulo")
+    @NotBlank(message = "No puede estar en blanco")
+    @Size(min = 4, max = 20, message = "Debe tener entre 4 y 20 chars")
     private String cadena;
     public Dato(DatoDTO datoDTO) {
         this.cadena = datoDTO.getCadena();

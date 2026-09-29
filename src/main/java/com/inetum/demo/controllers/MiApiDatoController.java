@@ -1,6 +1,7 @@
 package com.inetum.demo.controllers;
 
 import com.inetum.demo.dtos.Dato;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,7 +23,7 @@ public class MiApiDatoController {
         return this.listado;
     }
     @PostMapping
-    public Dato addDato(@RequestBody Dato dato) {
+    public Dato addDato(@Valid @RequestBody Dato dato) {
         lastID++;
         dato.setId(lastID);
         this.listado.add(dato);
@@ -38,6 +39,7 @@ public class MiApiDatoController {
     @PutMapping(value = "/{id}")
     public Dato editDatoById(
             @PathVariable("id") Long id,
+            @Valid
             @RequestBody Dato dato) {
         Dato d = this.listado.stream().filter(elemento ->
                 elemento.getId().equals(id)).findFirst().orElse(null);

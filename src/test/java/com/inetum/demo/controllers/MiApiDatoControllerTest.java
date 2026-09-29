@@ -9,14 +9,15 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.ArrayList;
 import java.util.List;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
+// Métodos de mockMvc.perform
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 @SpringBootTest
 @AutoConfigureMockMvc
+//Given
 public class MiApiDatoControllerTest {
     @Autowired
     MockMvc mockMvc;
@@ -27,26 +28,20 @@ public class MiApiDatoControllerTest {
     @BeforeEach
     public void clearRestData() throws Exception {
         System.out.println("limpiando");
-        mockMvc.perform(
-                        MockMvcRequestBuilders
-                                .get(basePath +"/clear")
+        mockMvc.perform(get(basePath +"/clear")
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
     @Test
     void testListShouldReturnOkResult() throws Exception {
-        mockMvc.perform(
-                        MockMvcRequestBuilders
-                                .get(basePath)
+        mockMvc.perform(get(basePath)
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
     @Test
     void testListShouldReturnDatoOkResult() throws Exception {
         List<Dato> listadoEsperado= new ArrayList<Dato>();
-        mockMvc.perform(
-                        MockMvcRequestBuilders
-                                .get(basePath)
+        mockMvc.perform(get(basePath)
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 // comprobación del tipo de contenido
@@ -56,15 +51,16 @@ public class MiApiDatoControllerTest {
     }
     @Test
     void testAddShouldReturnDato() throws Exception {
-        mockMvc.perform(
-                        MockMvcRequestBuilders
-                                .post(basePath)
-                                .content(asJsonString(new Dato(0L,"valor")))
+        Dato datoEnviado = new Dato(0L,"valor");
+        Dato datoPrevisto = new Dato(1L,"valor");
+        // When
+        mockMvc.perform(post(basePath)
+                                .content(asJsonString(datoEnviado))
                                 .contentType(MediaType.APPLICATION_JSON))
+                // Then
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(mapper.writeValueAsString(new
-                        Dato(1L,"valor"))));
+                .andExpect(content().json(mapper.writeValueAsString(datoPrevisto)));
     }
 
     public static String asJsonString(final Object obj) {
@@ -79,49 +75,44 @@ public class MiApiDatoControllerTest {
     void testGetByIDShouldReturnDato() throws Exception {
         // metemos el dato antes de consultarlo
         testAddShouldReturnDato();
-        mockMvc.perform(
-                        MockMvcRequestBuilders
-                                .get(basePath+"/1")
+
+        // Valor previsto a devolver
+        Dato datoPrevisto = new Dato(1L,"valor");
+        mockMvc.perform(get(basePath+"/1")
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(mapper.writeValueAsString(new
-                        Dato(1L,"valor"))));
+                .andExpect(content().json(mapper.writeValueAsString(datoPrevisto)));
     }
 
     @Test
     void testUpdateShouldReturnDato() throws Exception {
         // metemos el dato antes de consultarlo
         testAddShouldReturnDato();
-        mockMvc.perform(
-                        MockMvcRequestBuilders
-                                .put(basePath+"/1")
-                                .content(asJsonString(new Dato(0L,"valor1")))
+        Dato datoEnviado = new Dato(0L,"valor1");
+        Dato datoPrevisto = new Dato(1L,"valor1");
+        mockMvc.perform(put(basePath+"/1")
+                                .content(asJsonString(datoEnviado))
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(mapper.writeValueAsString(new
-                        Dato(1L,"valor1"))));
+                .andExpect(content().json(mapper.writeValueAsString(datoPrevisto)));
     }
     @Test
     void testRemoveByIDShouldReturnDato() throws Exception {
         // metemos el dato antes de consultarlo
         testAddShouldReturnDato();
-        mockMvc.perform(
-                        MockMvcRequestBuilders
-                                .delete(basePath+"/1")
+        Dato datoPrevisto = new Dato(1L,"valor");
+        mockMvc.perform(delete(basePath+"/1")
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(mapper.writeValueAsString(new
-                        Dato(1L,"valor"))));
+                .andExpect(content().json(mapper.writeValueAsString(datoPrevisto)));
     }
 
     @Test
     void testRemoveByIDShouldReturnEmptyDatoWhenNotFound() throws Exception {
-        mockMvc.perform(
-                        MockMvcRequestBuilders
-                                .delete(basePath + "/999")
+        mockMvc.perform(delete(basePath + "/999")
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(new Dato())));
