@@ -39,3 +39,31 @@ Característica: API de datos en memoria
     Cuando elimino el dato del listado con id 999
     Entonces la respuesta del listado tiene código 200
     Y el dato del listado devuelto está vacío
+
+  Escenario: Modificar parcialmente un dato existente con un parche
+    Y añado un dato al listado con la cadena "valor"
+    Cuando aplico un parche al dato del listado con id 1 con el campo "cadena" y valor "valor1"
+    Entonces la respuesta del listado tiene código 200 y es JSON
+    Y el dato del listado devuelto tiene id 1 y cadena "valor1"
+
+  Escenario: Un parche con un valor no válido devuelve 400 y no modifica el dato
+    Y añado un dato al listado con la cadena "valor"
+    Cuando aplico un parche al dato del listado con id 1 con el campo "cadena" y valor "abc"
+    Entonces la respuesta del listado tiene código 400 y es JSON
+    Cuando pido el dato del listado con id 1
+    Entonces el dato del listado devuelto tiene id 1 y cadena "valor"
+
+  Escenario: Un parche sobre un dato inexistente devuelve 404
+    Cuando aplico un parche al dato del listado con id 999 con el campo "cadena" y valor "valor1"
+    Entonces la respuesta del listado tiene código 404 y es JSON
+
+  Escenario: Un parche con un campo desconocido lo ignora y no modifica el dato
+    Y añado un dato al listado con la cadena "valor"
+    Cuando aplico un parche al dato del listado con id 1 con el campo "inexistente" y valor "x"
+    Entonces la respuesta del listado tiene código 200 y es JSON
+    Y el dato del listado devuelto tiene id 1 y cadena "valor"
+
+  Escenario: Un parche con Content-Type JSON normal devuelve 415
+    Y añado un dato al listado con la cadena "valor"
+    Cuando aplico un parche con Content-Type JSON normal al dato del listado con id 1 con el campo "cadena" y valor "valor1"
+    Entonces la respuesta del listado tiene código 415

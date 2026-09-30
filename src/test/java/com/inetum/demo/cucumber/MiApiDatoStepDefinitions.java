@@ -22,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MiApiDatoStepDefinitions {
 
     private static final String BASE_PATH = "/api/dato";
+    private static final MediaType MERGE_PATCH = MediaType.parseMediaType("application/merge-patch+json");
 
     @Autowired
     private WebTestClient webTestClient;
@@ -64,6 +65,25 @@ public class MiApiDatoStepDefinitions {
         ultimaRespuesta = webTestClient.put().uri(BASE_PATH + "/" + id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new Dato(0L, cadena))
+                .exchange()
+                .expectBody(String.class).returnResult();
+    }
+
+    @Cuando("aplico un parche al dato del listado con id {int} con el campo {string} y valor {string}")
+    public void aplicoUnParcheAlDatoDelListado(long id, String campo, String valor) {
+        enviarParche(id, campo, valor, MERGE_PATCH);
+    }
+
+    @Cuando("aplico un parche con Content-Type JSON normal al dato del listado con id {int} con el campo {string} y valor {string}")
+    public void aplicoUnParcheConJsonNormalAlDatoDelListado(long id, String campo, String valor) {
+        enviarParche(id, campo, valor, MediaType.APPLICATION_JSON);
+    }
+
+    private void enviarParche(long id, String campo, String valor, MediaType contentType) {
+        String cuerpo = mapper.writeValueAsString(mapper.createObjectNode().put(campo, valor));
+        ultimaRespuesta = webTestClient.patch().uri(BASE_PATH + "/" + id)
+                .contentType(contentType)
+                .bodyValue(cuerpo)
                 .exchange()
                 .expectBody(String.class).returnResult();
     }
@@ -131,6 +151,16 @@ public class MiApiDatoStepDefinitions {
     @When("I update the list item with id {int} with the string {string}")
     public void iUpdateTheListItemWithId(long id, String cadena) {
         modificoElDatoDelListadoConId(id, cadena);
+    }
+
+    @When("I patch the list item with id {int} with field {string} and value {string}")
+    public void iPatchTheListItemWithId(long id, String campo, String valor) {
+        aplicoUnParcheAlDatoDelListado(id, campo, valor);
+    }
+
+    @When("I patch the list item with id {int} using the plain JSON content type with field {string} and value {string}")
+    public void iPatchTheListItemUsingPlainJson(long id, String campo, String valor) {
+        aplicoUnParcheConJsonNormalAlDatoDelListado(id, campo, valor);
     }
 
     @When("I delete the list item with id {int}")
