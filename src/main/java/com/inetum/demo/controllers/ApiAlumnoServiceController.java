@@ -139,6 +139,11 @@ public class ApiAlumnoServiceController {
                 HttpStatus.OK);
     }
     @GetMapping("/{id}")
+    @Operation(
+            summary = "show a dato object",
+            description = "show a dato object by id",
+            tags = { "dato" }
+    )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -171,7 +176,9 @@ public class ApiAlumnoServiceController {
                             )
                     })
     })
-    public ResponseEntity<Alumno> showDatoById(@PathVariable("id") Long id){
+    public ResponseEntity<Alumno> showDatoById(
+            @Parameter(description = "Identificativo del Dato", required = true)
+            @PathVariable("id") Long id){
         Alumno alumno = this.alumnoService.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException(
                         "Not found with id = " + id
