@@ -3,7 +3,7 @@ package com.inetum.demo.controllers;
 import com.inetum.demo.services.AlumnoService;
 import com.inetum.demo.domain.Alumno;
 import com.inetum.demo.dtos.AlumnoDTO;
-import com.inetum.demo.dtos.ErrorMessage;
+import com.inetum.demo.dtos.ErrorResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -162,12 +162,12 @@ public class ApiAlumnoServiceController {
                             @Content(
                                     mediaType = "application/xml",
                                     schema = @Schema(
-                                            implementation = ErrorMessage.class)
+                                            implementation = ErrorResponseDto.class)
                             ),
                             @Content(
                                     mediaType = "application/json",
                                     schema = @Schema(
-                                            implementation = ErrorMessage.class)
+                                            implementation = ErrorResponseDto.class)
                             )
                     })
     })
@@ -236,12 +236,12 @@ public class ApiAlumnoServiceController {
                             @Content(
                                     mediaType = "application/xml",
                                     schema = @Schema(
-                                            implementation = ErrorMessage.class)
+                                            implementation = ErrorResponseDto.class)
                             ),
                             @Content(
                                     mediaType = "application/json",
                                     schema = @Schema(
-                                            implementation = ErrorMessage.class)
+                                            implementation = ErrorResponseDto.class)
                             )
                     })
     })

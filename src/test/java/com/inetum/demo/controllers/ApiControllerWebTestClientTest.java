@@ -108,7 +108,7 @@ class ApiControllerWebTestClientTest {
                 .exchange()
                 .expectStatus().isNotFound()
                 .expectBody()
-                .jsonPath("$.statusCode").isEqualTo(404)
-                .jsonPath("$.message").isEqualTo("Not found with id = 1");
+                .jsonPath("$.status").isEqualTo(404)
+                .jsonPath("$.detail").isEqualTo("Not found with id = 1");
     }
 }
