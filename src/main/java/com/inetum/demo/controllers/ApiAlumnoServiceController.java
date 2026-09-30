@@ -4,6 +4,9 @@ import com.inetum.demo.services.AlumnoService;
 import com.inetum.demo.domain.Alumno;
 import com.inetum.demo.dtos.AlumnoDTO;
 import com.inetum.demo.dtos.ErrorResponseDto;
+import com.inetum.demo.patch.MergePatchOperation;
+import com.inetum.demo.patch.MergePatchService;
+import tools.jackson.databind.JsonNode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -28,10 +31,12 @@ import java.util.Optional;
 @RequestMapping("/api/v1/alumnos")
 public class ApiAlumnoServiceController {
     AlumnoService alumnoService;
+    private final MergePatchService mergePatch;
 
     @Autowired
-    ApiAlumnoServiceController(AlumnoService alumnoService){
+    ApiAlumnoServiceController(AlumnoService alumnoService, MergePatchService mergePatch){
         this.alumnoService = alumnoService;
+        this.mergePatch = mergePatch;
     }
 
     @GetMapping("/")
@@ -218,6 +223,27 @@ public class ApiAlumnoServiceController {
                 headers,
                 status
         );
+    }
+    @MergePatchOperation
+    @PatchMapping(value = "/{id}", consumes = "application/merge-patch+json")
+    public ResponseEntity<Alumno> patchDatoById(
+            @PathVariable("id") Long id,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @io.swagger.v3.oas.annotations.media.Content(
+                            mediaType = "application/merge-patch+json",
+                            examples = @io.swagger.v3.oas.annotations.media.ExampleObject(value = "{\"nombre\": \"Marta2\"}")))
+            @RequestBody JsonNode patch) {
+        Alumno alumno = this.alumnoService.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException(
+                        "Not found with id = " + id
+                ));
+        AlumnoDTO parcheado = mergePatch.apply(AlumnoDTO.from(alumno), patch);
+        alumno.setNombre(parcheado.getNombre());
+        alumno.setApellidos(parcheado.getApellidos());
+        alumno.setEdad(parcheado.getEdad());
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return new ResponseEntity<>(this.alumnoService.save(alumno), headers, HttpStatus.OK);
     }
     @DeleteMapping(value = "/{id}")
     @ApiResponses(value = {

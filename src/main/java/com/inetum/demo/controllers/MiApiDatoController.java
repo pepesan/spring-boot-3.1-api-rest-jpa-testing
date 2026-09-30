@@ -1,13 +1,14 @@
 package com.inetum.demo.controllers;
 
 import com.inetum.demo.dtos.Dato;
-import jakarta.validation.ConstraintViolationException;
+import com.inetum.demo.patch.MergePatchOperation;
+import com.inetum.demo.patch.MergePatchService;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import jakarta.validation.Valid;
-import jakarta.validation.Validator;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.json.JsonMapper;
 import java.util.LinkedList;
 import java.util.List;
 @RestController
@@ -16,12 +17,10 @@ public class MiApiDatoController {
     public List<Dato> listado = new LinkedList<>();
     public Long lastID = 0L;
 
-    private final JsonMapper mapper;
-    private final Validator validator;
+    private final MergePatchService mergePatch;
 
-    public MiApiDatoController(JsonMapper mapper, Validator validator) {
-        this.mapper = mapper;
-        this.validator = validator;
+    public MiApiDatoController(MergePatchService mergePatch) {
+        this.mergePatch = mergePatch;
     }
 
     @GetMapping("/clear")
@@ -70,21 +69,20 @@ public class MiApiDatoController {
      * campos a cambiar, con Content-Type application/merge-patch+json.
      * El id nunca se modifica y el resultado se valida antes de guardarse.
      */
+    @MergePatchOperation
     @PatchMapping(value = "/{id}", consumes = "application/merge-patch+json")
     public Dato patchDatoById(
             @PathVariable("id") Long id,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(mediaType = "application/merge-patch+json",
+                            examples = @ExampleObject(value = "{\"cadena\": \"valor1\"}")))
             @RequestBody JsonNode patch) {
         Dato actual = this.listado.stream().filter(elemento ->
                 elemento.getId().equals(id)).findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException("Not found with id = " + id));
         // Se aplica el parche sobre una copia para no tocar el original si no es válido
-        Dato parcheado = mapper.readerForUpdating(new Dato(actual.getId(), actual.getCadena()))
-                .readValue(patch);
+        Dato parcheado = mergePatch.apply(new Dato(actual.getId(), actual.getCadena()), patch);
         parcheado.setId(id);
-        var violaciones = validator.validate(parcheado);
-        if (!violaciones.isEmpty()) {
-            throw new ConstraintViolationException(violaciones);
-        }
         this.listado.set(this.listado.indexOf(actual), parcheado);
         return parcheado;
     }

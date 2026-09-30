@@ -2,6 +2,9 @@ package com.inetum.demo.controllers;
 
 import com.inetum.demo.domain.Alumno;
 import com.inetum.demo.dtos.AlumnoDTO;
+import com.inetum.demo.patch.MergePatchOperation;
+import com.inetum.demo.patch.MergePatchService;
+import tools.jackson.databind.JsonNode;
 import com.inetum.demo.services.AlumnoServiceMapper;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +22,14 @@ import java.util.List;
 public class ApiAlumnoServiceMapperController {
 
     public AlumnoServiceMapper alumnoService;
+    private final MergePatchService mergePatch;
 
 
     @Autowired
-    ApiAlumnoServiceMapperController (@Qualifier("alumnoServiceMapperImpl") AlumnoServiceMapper alumnoService){
+    ApiAlumnoServiceMapperController (@Qualifier("alumnoServiceMapperImpl") AlumnoServiceMapper alumnoService,
+                                      MergePatchService mergePatch){
         this.alumnoService = alumnoService;
+        this.mergePatch = mergePatch;
     }
 
     @GetMapping
@@ -64,6 +70,22 @@ public class ApiAlumnoServiceMapperController {
                 headers,
                 status
         );
+    }
+
+    @MergePatchOperation
+    @PatchMapping(value = "/{id}", consumes = "application/merge-patch+json")
+    public ResponseEntity<Alumno> patchDatoById(
+            @PathVariable("id") Long id,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @io.swagger.v3.oas.annotations.media.Content(
+                            mediaType = "application/merge-patch+json",
+                            examples = @io.swagger.v3.oas.annotations.media.ExampleObject(value = "{\"nombre\": \"Marta2\"}")))
+            @RequestBody JsonNode patch) {
+        // findById lanza ResourceNotFoundException (404) si no existe
+        AlumnoDTO parcheado = mergePatch.apply(AlumnoDTO.from(this.alumnoService.findById(id)), patch);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return new ResponseEntity<>(this.alumnoService.update(parcheado, id), headers, HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/{id}")

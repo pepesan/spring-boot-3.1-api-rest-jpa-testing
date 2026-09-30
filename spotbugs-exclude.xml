@@ -40,9 +40,9 @@
         <Class name="com.inetum.demo.ejercicios.ClienteController"/>
         <Bug pattern="EI_EXPOSE_REP2"/>
     </Match>
-    <!-- Igual: JsonMapper y Validator inyectados por constructor en MiApiDatoController. -->
+    <!-- Igual: JsonMapper y Validator inyectados por constructor en MergePatchService. -->
     <Match>
-        <Class name="com.inetum.demo.controllers.MiApiDatoController"/>
+        <Class name="com.inetum.demo.patch.MergePatchService"/>
         <Bug pattern="EI_EXPOSE_REP2"/>
     </Match>
 </FindBugsFilter>

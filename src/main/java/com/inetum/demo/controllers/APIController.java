@@ -3,6 +3,9 @@ package com.inetum.demo.controllers;
 import com.inetum.demo.dtos.Dato;
 import com.inetum.demo.dtos.DatoDTO;
 import com.inetum.demo.dtos.ErrorResponseDto;
+import com.inetum.demo.patch.MergePatchOperation;
+import com.inetum.demo.patch.MergePatchService;
+import tools.jackson.databind.JsonNode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -30,6 +33,12 @@ import java.util.List;
 public class APIController {
     public List<Dato> listado = new LinkedList<>();
     public Long lastID = 0L;
+
+    private final MergePatchService mergePatch;
+
+    public APIController(MergePatchService mergePatch) {
+        this.mergePatch = mergePatch;
+    }
     @GetMapping("/")
     @Operation(
             summary = "show list of dato objects",
@@ -168,7 +177,6 @@ public class APIController {
                 headers,
                 status);
     }
-    // @PatchMapping(value = "/{id}")
     @PutMapping(value = "/{id}")
     public ResponseEntity<Dato> editDatoById(
             @PathVariable("id") Long id,
@@ -192,6 +200,26 @@ public class APIController {
                 headers,
                 status
                 );
+    }
+
+    @MergePatchOperation
+    @PatchMapping(value = "/{id}", consumes = "application/merge-patch+json")
+    public ResponseEntity<Dato> patchDatoById(
+            @PathVariable("id") Long id,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @io.swagger.v3.oas.annotations.media.Content(
+                            mediaType = "application/merge-patch+json",
+                            examples = @io.swagger.v3.oas.annotations.media.ExampleObject(value = "{\"cadena\": \"valor1\"}")))
+            @RequestBody JsonNode patch) {
+        Dato actual = this.listado.stream().filter(elemento ->
+                elemento.getId().equals(id)).findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Not found with id = " + id));
+        Dato parcheado = mergePatch.apply(new Dato(actual.getId(), actual.getCadena()), patch);
+        parcheado.setId(id);
+        this.listado.set(this.listado.indexOf(actual), parcheado);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return new ResponseEntity<>(parcheado, headers, HttpStatus.OK);
     }
 
 //    @DeleteMapping(value = "/{id}")

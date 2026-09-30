@@ -190,6 +190,19 @@ public class MiApiDatoControllerTest {
     }
 
     @Test
+    void testPatchWithMalformedJsonShouldReturn400() throws Exception {
+        testAddShouldReturnDato();
+        // coma sobrante: JSON no válido
+        mockMvc.perform(patch(basePath + "/1")
+                                .content("{\"cadena\": \"adios\",}")
+                                .contentType(MERGE_PATCH))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.title").value("Petición mal formada"));
+        mockMvc.perform(get(basePath + "/1"))
+                .andExpect(content().json(mapper.writeValueAsString(new Dato(1L, "valor"))));
+    }
+
+    @Test
     void testPatchNotFoundShouldReturn404() throws Exception {
         mockMvc.perform(patch(basePath + "/999")
                                 .content(mapper.writeValueAsString(cuerpoPatch().put("cadena", "valor1")))

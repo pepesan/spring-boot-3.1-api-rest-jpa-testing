@@ -3,6 +3,9 @@ package com.inetum.demo.controllers;
 import com.inetum.demo.domain.Alumno;
 import com.inetum.demo.dtos.AlumnoDTO;
 import com.inetum.demo.dtos.PageResponse;
+import com.inetum.demo.patch.MergePatchOperation;
+import com.inetum.demo.patch.MergePatchService;
+import tools.jackson.databind.JsonNode;
 import com.inetum.demo.repositories.AlumnoRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +29,12 @@ public class AlumnoRepositoryController {
 
     // @Autowired
     private final AlumnoRepository alumnoRepository;
+    private final MergePatchService mergePatch;
 
     @Autowired
-    public AlumnoRepositoryController(AlumnoRepository alumnoRepository){
+    public AlumnoRepositoryController(AlumnoRepository alumnoRepository, MergePatchService mergePatch){
         this.alumnoRepository = alumnoRepository;
+        this.mergePatch = mergePatch;
     }
 
     @GetMapping("/")
@@ -92,6 +97,28 @@ public class AlumnoRepositoryController {
         alumno.setNombre(alumnoDto.getNombre());
         alumno.setApellidos(alumnoDto.getApellidos());
         alumno.setEdad(alumnoDto.getEdad());
+        return ResponseEntity.ok(alumnoRepository.save(alumno));
+    }
+
+    @MergePatchOperation
+    @PatchMapping(value = "/{id}", consumes = "application/merge-patch+json")
+    public ResponseEntity<Alumno> patch(
+            @PathVariable("id") Long id,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @io.swagger.v3.oas.annotations.media.Content(
+                            mediaType = "application/merge-patch+json",
+                            examples = @io.swagger.v3.oas.annotations.media.ExampleObject(value = "{\"nombre\": \"Marta2\"}")))
+            @RequestBody JsonNode patch) {
+        Alumno alumno = alumnoRepository
+                .findById(id)
+                .orElseThrow(() ->
+                    new ResourceNotFoundException(
+                            "Not found with id = " + id
+                ));
+        AlumnoDTO parcheado = mergePatch.apply(AlumnoDTO.from(alumno), patch);
+        alumno.setNombre(parcheado.getNombre());
+        alumno.setApellidos(parcheado.getApellidos());
+        alumno.setEdad(parcheado.getEdad());
         return ResponseEntity.ok(alumnoRepository.save(alumno));
     }
 
