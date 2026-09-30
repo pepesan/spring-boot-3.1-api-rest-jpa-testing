@@ -2,6 +2,7 @@ package com.inetum.demo.advices;
 
 import com.inetum.demo.dtos.ErrorResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -41,6 +42,16 @@ public class ControllerExceptionHandler {
                 .forEach(fe -> errors.putIfAbsent(fe.getField(), fe.getDefaultMessage()));
         ex.getBindingResult().getGlobalErrors()
                 .forEach(ge -> errors.putIfAbsent(ge.getObjectName(), ge.getDefaultMessage()));
+        return build(HttpStatus.BAD_REQUEST, "validation-error", "Error de validación",
+                "La petición contiene datos no válidos", request, errors);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponseDto> handleConstraintViolation(
+            ConstraintViolationException ex, HttpServletRequest request) {
+        Map<String, String> errors = new LinkedHashMap<>();
+        ex.getConstraintViolations().forEach(v ->
+                errors.putIfAbsent(v.getPropertyPath().toString(), v.getMessage()));
         return build(HttpStatus.BAD_REQUEST, "validation-error", "Error de validación",
                 "La petición contiene datos no válidos", request, errors);
     }

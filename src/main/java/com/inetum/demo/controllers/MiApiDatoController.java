@@ -1,8 +1,13 @@
 package com.inetum.demo.controllers;
 
 import com.inetum.demo.dtos.Dato;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
+import jakarta.validation.Validator;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.web.bind.annotation.*;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
 import java.util.LinkedList;
 import java.util.List;
 @RestController
@@ -10,6 +15,14 @@ import java.util.List;
 public class MiApiDatoController {
     public List<Dato> listado = new LinkedList<>();
     public Long lastID = 0L;
+
+    private final JsonMapper mapper;
+    private final Validator validator;
+
+    public MiApiDatoController(JsonMapper mapper, Validator validator) {
+        this.mapper = mapper;
+        this.validator = validator;
+    }
 
     @GetMapping("/clear")
     List<Dato> clear(){
@@ -51,6 +64,29 @@ public class MiApiDatoController {
         }else{
             return new Dato();
         }
+    }
+    /**
+     * Modificación parcial según JSON Merge Patch (RFC 7386): el cliente envía solo los
+     * campos a cambiar, con Content-Type application/merge-patch+json.
+     * El id nunca se modifica y el resultado se valida antes de guardarse.
+     */
+    @PatchMapping(value = "/{id}", consumes = "application/merge-patch+json")
+    public Dato patchDatoById(
+            @PathVariable("id") Long id,
+            @RequestBody JsonNode patch) {
+        Dato actual = this.listado.stream().filter(elemento ->
+                elemento.getId().equals(id)).findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Not found with id = " + id));
+        // Se aplica el parche sobre una copia para no tocar el original si no es válido
+        Dato parcheado = mapper.readerForUpdating(new Dato(actual.getId(), actual.getCadena()))
+                .readValue(patch);
+        parcheado.setId(id);
+        var violaciones = validator.validate(parcheado);
+        if (!violaciones.isEmpty()) {
+            throw new ConstraintViolationException(violaciones);
+        }
+        this.listado.set(this.listado.indexOf(actual), parcheado);
+        return parcheado;
     }
     @DeleteMapping(value = "/{id}")
     public Dato deleteDatoById(@PathVariable Long id){
