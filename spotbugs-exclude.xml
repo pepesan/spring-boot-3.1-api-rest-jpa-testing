@@ -40,6 +40,16 @@
         <Class name="com.inetum.demo.ejercicios.ClienteController"/>
         <Bug pattern="EI_EXPOSE_REP2"/>
     </Match>
+    <!-- Igual: controladores, servicios y repositorios "cliente" (RestTemplate/WebClient)
+         que reciben por constructor otro bean de Spring (servicio, repositorio o cliente HTTP). -->
+    <Match>
+        <Or>
+            <Class name="~com\.inetum\.demo\.controllers\.clientes\..*"/>
+            <Class name="~com\.inetum\.demo\.services\.clientes\..*"/>
+            <Class name="~com\.inetum\.demo\.repositories\.clientes\..*"/>
+        </Or>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
     <!-- Igual: JsonMapper y Validator inyectados por constructor en MergePatchService. -->
     <Match>
         <Class name="com.inetum.demo.patch.MergePatchService"/>
