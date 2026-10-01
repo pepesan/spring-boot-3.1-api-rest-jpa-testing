@@ -37,7 +37,10 @@
          de un bean de servicio, y todos los demás controladores del proyecto hacen
          exactamente lo mismo sin que SpotBugs los marque. -->
     <Match>
-        <Class name="com.inetum.demo.ejercicios.ClienteController"/>
+        <Or>
+            <Class name="com.inetum.demo.ejercicios.ClienteController"/>
+            <Class name="com.inetum.demo.controllers.onetoone.OneToOneController"/>
+        </Or>
         <Bug pattern="EI_EXPOSE_REP2"/>
     </Match>
     <!-- Igual: controladores, servicios y repositorios "cliente" (RestTemplate/WebClient)

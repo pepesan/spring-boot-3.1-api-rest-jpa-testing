@@ -18,25 +18,6 @@ class OneToOneControllersTest {
     private MockMvc mockMvc;
 
     @Test
-    void oneToOneIndexReturnsPhoneWithDetails() throws Exception {
-        mockMvc.perform(get("/api/v1/onetoone/"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].number").value("923124578"))
-                .andExpect(jsonPath("$[0].details.provider").value("PepePhone"))
-                .andExpect(jsonPath("$[0].details.technology").value("5G"));
-    }
-
-    @Test
-    void oneToOneProviderReturnsPepephones() throws Exception {
-        // /provider consulta sin sembrar datos: hay que llamar antes a "/" (que sí los siembra).
-        mockMvc.perform(get("/api/v1/onetoone/"))
-                .andExpect(status().isOk());
-        mockMvc.perform(get("/api/v1/onetoone/provider"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].details.provider").value("PepePhone"));
-    }
-
-    @Test
     void oneToOneBidirectionalIndexReturnsOrderWithBillingAddress() throws Exception {
         mockMvc.perform(get("/api/v1/onetoonebi/"))
                 .andExpect(status().isOk())

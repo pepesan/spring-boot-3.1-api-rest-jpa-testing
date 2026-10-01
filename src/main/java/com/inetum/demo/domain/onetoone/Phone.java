@@ -15,7 +15,8 @@ public class Phone {
     private Long id;
     @Column(name = "`number`")
     private String number;
-    @OneToOne
+    // Los details pertenecen al teléfono: se guardan y borran con él (y se borran si se quitan)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "details_id")
     private PhoneDetails details;
 }
