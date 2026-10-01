@@ -1,10 +1,13 @@
 package com.inetum.demo.advices;
 
 import com.inetum.demo.dtos.ErrorResponseDto;
+import com.inetum.demo.gateways.AlumnoGatewayException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -26,6 +30,10 @@ public class ControllerExceptionHandler {
 
     private static final String ERROR_TYPE_BASE = "https://inetum.com/errors/";
     private static final String REQUEST_ID_HEADER = "X-Request-Id";
+
+    /** Valor de Retry-After del 503 del gateway (alumnos.gateway.retry-after). */
+    @Value("${alumnos.gateway.retry-after:5s}")
+    private Duration retryAfter = Duration.ofSeconds(5);
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponseDto> handleResourceNotFound(
@@ -61,6 +69,28 @@ public class ControllerExceptionHandler {
             HttpMessageNotReadableException ex, HttpServletRequest request) {
         return build(HttpStatus.BAD_REQUEST, "malformed-request", "Petición mal formada",
                 "El cuerpo de la petición no se puede interpretar", request, null);
+    }
+
+    /**
+     * Fallo del servicio remoto tras agotar los reintentos del gateway: 503 + Retry-After si es
+     * transitorio (el cliente puede reintentar más tarde), 502 si el remoto rechazó la petición.
+     */
+    @ExceptionHandler(AlumnoGatewayException.class)
+    public ResponseEntity<ErrorResponseDto> handleGateway(
+            AlumnoGatewayException ex, HttpServletRequest request) {
+        String instance = resolveInstance(request);
+        log.warn("APP: fallo del gateway de alumnos [{}]: {}", instance, ex.getMessage());
+        if (!ex.isTransitorio()) {
+            return build(HttpStatus.BAD_GATEWAY, "upstream-rejected", "Petición rechazada por el servicio remoto",
+                    "El servicio remoto de alumnos rechazó la petición", instance, null);
+        }
+        ResponseEntity<ErrorResponseDto> base = build(HttpStatus.SERVICE_UNAVAILABLE, "upstream-unavailable",
+                "Servicio remoto no disponible",
+                "El servicio remoto de alumnos no responde; inténtelo de nuevo más tarde", instance, null);
+        return ResponseEntity.status(base.getStatusCode())
+                .header(HttpHeaders.RETRY_AFTER, String.valueOf(retryAfter.toSeconds()))
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(base.getBody());
     }
 
     @ExceptionHandler(Exception.class)

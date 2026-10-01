@@ -47,8 +47,19 @@
             <Class name="~com\.inetum\.demo\.controllers\.clientes\..*"/>
             <Class name="~com\.inetum\.demo\.services\.clientes\..*"/>
             <Class name="~com\.inetum\.demo\.repositories\.clientes\..*"/>
+            <Class name="~com\.inetum\.demo\.controllers\.gateway\..*"/>
+            <Class name="~com\.inetum\.demo\.services\.gateway\..*"/>
+            <Class name="~com\.inetum\.demo\.gateways\..*"/>
         </Or>
         <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+    <!-- Listado ya guarda una copia inmutable (List.copyOf) de la lista: no hay nada mutable que exponer. -->
+    <Match>
+        <Class name="com.inetum.demo.services.gateway.AlumnoGatewayService$Listado"/>
+        <Or>
+            <Bug pattern="EI_EXPOSE_REP"/>
+            <Bug pattern="EI_EXPOSE_REP2"/>
+        </Or>
     </Match>
     <!-- Igual: JsonMapper y Validator inyectados por constructor en MergePatchService. -->
     <Match>
