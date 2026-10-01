@@ -213,7 +213,6 @@ public class ApiAlumnoServiceController {
         alumno.setNombre(dato.getNombre());
         alumno.setEdad(dato.getEdad());
         this.alumnoService.save(alumno);
-        this.alumnoService.save(alumno);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpStatus status = HttpStatus.OK;
