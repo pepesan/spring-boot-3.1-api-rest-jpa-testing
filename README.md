@@ -31,6 +31,14 @@ http://localhost:8080/swagger-ui/index.html
 ### Código JSON de Swagger/OpenApi
 http://localhost:8080/v3/api-docs
 
+### Acceso H2 Console (SQL Web DDBB)
+http://localhost:8080/h2-console
+
+Pilla el datasource de la bbdd desde el log de arranque de la app:
+jdbc:h2:mem:testdb
+Test Connection
+Y Connect
+
 ## Ejecución de migraciones
 mvn flyway:migrate
 
