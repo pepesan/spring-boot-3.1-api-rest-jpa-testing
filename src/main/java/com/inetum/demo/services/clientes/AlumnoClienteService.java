@@ -2,6 +2,7 @@ package com.inetum.demo.services.clientes;
 
 import com.inetum.demo.domain.Alumno;
 import com.inetum.demo.dtos.AlumnoDTO;
+import tools.jackson.databind.JsonNode;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,5 +15,7 @@ public interface AlumnoClienteService {
 
     Alumno create(AlumnoDTO alumno);
 
+    Optional<Alumno> update(Long id, AlumnoDTO alumno);
+    Optional<Alumno> patch(Long id, JsonNode patch);
     Optional<Alumno> remove(Long id);
 }

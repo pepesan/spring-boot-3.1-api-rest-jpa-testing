@@ -3,10 +3,12 @@ package com.inetum.demo.repositories.clientes;
 import com.inetum.demo.clientes.AlumnoApiBaseUrl;
 import com.inetum.demo.domain.Alumno;
 import com.inetum.demo.dtos.AlumnoDTO;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
+import tools.jackson.databind.JsonNode;
 
 import java.util.List;
 import java.util.Optional;
@@ -55,6 +57,29 @@ public class AlumnoWebClientApiRepository implements AlumnoApiRepository {
                 .retrieve()
                 .bodyToMono(Alumno.class)
                 .block();
+    }
+
+    @Override
+    public Optional<Alumno> update(Long id, AlumnoDTO alumno) {
+        return Optional.ofNullable(webClient.put()
+                .uri(baseUrl.alumnos() + "/{id}", id)
+                .bodyValue(alumno)
+                .retrieve()
+                .bodyToMono(Alumno.class)
+                .onErrorResume(WebClientResponseException.NotFound.class, e -> Mono.empty())
+                .block());
+    }
+
+    @Override
+    public Optional<Alumno> patch(Long id, JsonNode patch) {
+        return Optional.ofNullable(webClient.patch()
+                .uri(baseUrl.alumnos() + "/{id}", id)
+                .contentType(MediaType.valueOf("application/merge-patch+json"))
+                .bodyValue(patch)
+                .retrieve()
+                .bodyToMono(Alumno.class)
+                .onErrorResume(WebClientResponseException.NotFound.class, e -> Mono.empty())
+                .block());
     }
 
     @Override

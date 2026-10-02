@@ -12,17 +12,17 @@ import tools.jackson.databind.JsonNode;
 import java.util.List;
 
 /**
- * Controlador "cliente": no accede a la base de datos, sino que consulta con {@code WebClient}
+ * Controlador "cliente": no accede a la base de datos, sino que consulta con el {@code HttpClient} síncrono del JDK ({@code send})
  * el endpoint /api/v1/alumnos de esta misma aplicación (o del servidor en alumnos.api.base-url).
  */
 @RestController
-@RequestMapping("/api/v1/clientes/webclient/alumnos")
-public class AlumnoWebClientClienteController {
+@RequestMapping("/api/v1/clientes/jdkhttp/alumnos")
+public class AlumnoJdkHttpClienteController {
 
     private final AlumnoClienteService service;
 
-    public AlumnoWebClientClienteController(
-            @Qualifier("alumnoWebClientClienteService") AlumnoClienteService service) {
+    public AlumnoJdkHttpClienteController(
+            @Qualifier("alumnoJdkHttpClienteService") AlumnoClienteService service) {
         this.service = service;
     }
 

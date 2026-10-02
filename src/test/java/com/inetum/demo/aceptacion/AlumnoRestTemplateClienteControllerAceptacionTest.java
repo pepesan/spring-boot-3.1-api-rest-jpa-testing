@@ -10,6 +10,8 @@ import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRe
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -79,6 +81,61 @@ class AlumnoRestTemplateClienteControllerAceptacionTest {
         assertThat(restTemplate.getForEntity(API + "/{id}", String.class, creado.getId()).getStatusCode())
                 .isEqualTo(HttpStatus.NOT_FOUND);
         assertThat(restTemplate.getForEntity(CLIENTE + "/{id}", String.class, creado.getId()).getStatusCode())
+                .isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    void putPorClienteReemplazaElAlumnoEnElApiReal() {
+        Alumno creado = crearPorCliente("CliRTPut");
+        AlumnoDTO nuevo = alumnoDto("CliRTPut2");
+        nuevo.setEdad(41);
+
+        ResponseEntity<Alumno> respuesta = restTemplate.exchange(
+                CLIENTE + "/{id}", HttpMethod.PUT, new HttpEntity<>(nuevo), Alumno.class, creado.getId());
+
+        assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(respuesta.getBody().getId()).isEqualTo(creado.getId());
+        assertThat(respuesta.getBody().getEdad()).isEqualTo(41);
+        assertThat(restTemplate.getForObject(API + "/{id}", Alumno.class, creado.getId()).getNombre())
+                .isEqualTo("CliRTPut2");
+    }
+
+    @Test
+    void putPorClienteDeUnIdInexistenteDaNotFoundYInvalidoBadRequest() {
+        Alumno creado = crearPorCliente("CliRTPut404");
+
+        assertThat(restTemplate.exchange(CLIENTE + "/{id}", HttpMethod.PUT,
+                new HttpEntity<>(alumnoDto("Nuevo")), String.class, creado.getId() + 1000).getStatusCode())
+                .isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(restTemplate.exchange(CLIENTE + "/{id}", HttpMethod.PUT,
+                new HttpEntity<>(alumnoDto("ab")), String.class, creado.getId()).getStatusCode())
+                .isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void patchPorClienteModificaSoloLosCamposEnviados() {
+        Alumno creado = crearPorCliente("CliRTPatch");
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.CONTENT_TYPE, "application/merge-patch+json");
+
+        ResponseEntity<Alumno> respuesta = restTemplate.exchange(CLIENTE + "/{id}", HttpMethod.PATCH,
+                new HttpEntity<>("{\"nombre\":\"CliRTPatch2\"}", headers), Alumno.class, creado.getId());
+
+        assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(respuesta.getBody().getNombre()).isEqualTo("CliRTPatch2");
+        Alumno enApi = restTemplate.getForObject(API + "/{id}", Alumno.class, creado.getId());
+        assertThat(enApi.getNombre()).isEqualTo("CliRTPatch2");
+        assertThat(enApi.getApellidos()).isEqualTo(creado.getApellidos());
+        assertThat(enApi.getEdad()).isEqualTo(creado.getEdad());
+    }
+
+    @Test
+    void patchPorClienteDeUnIdInexistenteDaNotFound() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.CONTENT_TYPE, "application/merge-patch+json");
+
+        assertThat(restTemplate.exchange(CLIENTE + "/{id}", HttpMethod.PATCH,
+                new HttpEntity<>("{\"nombre\":\"Nadie\"}", headers), String.class, 999999).getStatusCode())
                 .isEqualTo(HttpStatus.NOT_FOUND);
     }
 }

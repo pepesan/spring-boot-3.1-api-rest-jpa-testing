@@ -21,16 +21,16 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Aceptación del controlador cliente de WebClient (/api/v1/clientes/webclient/alumnos): cada petición
+ * Aceptación del controlador cliente de JdkHttpAsync (/api/v1/clientes/jdkhttp-async/alumnos): cada petición
  * dispara una segunda llamada HTTP del propio servidor hacia /api/v1/alumnos. Se comprueba
  * que lo que se crea/borra a través del cliente es lo que ve el API real.
  */
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestRestTemplate
 @Tag("Aceptance")
-class AlumnoWebClientClienteControllerAceptacionTest {
+class AlumnoJdkHttpAsyncClienteControllerAceptacionTest {
 
-    private static final String CLIENTE = "/api/v1/clientes/webclient/alumnos";
+    private static final String CLIENTE = "/api/v1/clientes/jdkhttp-async/alumnos";
     private static final String API = "/api/v1/alumnos";
 
     @Autowired
@@ -53,7 +53,7 @@ class AlumnoWebClientClienteControllerAceptacionTest {
 
     @Test
     void crearPorClienteLoDejaDisponibleEnElApiReal() {
-        Alumno creado = crearPorCliente("ClienteWebClient");
+        Alumno creado = crearPorCliente("ClienteJdkHttpAsync");
 
         assertThat(creado.getId()).isPositive();
         assertThat(restTemplate.getForObject(API + "/{id}", Alumno.class, creado.getId())).isEqualTo(creado);
@@ -61,7 +61,7 @@ class AlumnoWebClientClienteControllerAceptacionTest {
 
     @Test
     void consultarPorIdYListarPorCliente() {
-        Alumno creado = crearPorCliente("CliWebClientLis");
+        Alumno creado = crearPorCliente("CliJdkHttpAsyncLis");
 
         assertThat(restTemplate.getForObject(CLIENTE + "/{id}", Alumno.class, creado.getId()))
                 .isEqualTo(creado);
@@ -72,7 +72,7 @@ class AlumnoWebClientClienteControllerAceptacionTest {
 
     @Test
     void borrarPorClienteYLuegoNotFound() {
-        Alumno creado = crearPorCliente("CliWebClientDel");
+        Alumno creado = crearPorCliente("CliJdkHttpAsyncDel");
 
         ResponseEntity<Alumno> borrado = restTemplate.exchange(
                 CLIENTE + "/{id}", HttpMethod.DELETE, null, Alumno.class, creado.getId());
@@ -86,8 +86,8 @@ class AlumnoWebClientClienteControllerAceptacionTest {
 
     @Test
     void putPorClienteReemplazaElAlumnoEnElApiReal() {
-        Alumno creado = crearPorCliente("CliWCPut");
-        AlumnoDTO nuevo = alumnoDto("CliWCPut2");
+        Alumno creado = crearPorCliente("CliJdkAPut");
+        AlumnoDTO nuevo = alumnoDto("CliJdkAPut2");
         nuevo.setEdad(41);
 
         ResponseEntity<Alumno> respuesta = restTemplate.exchange(
@@ -97,12 +97,12 @@ class AlumnoWebClientClienteControllerAceptacionTest {
         assertThat(respuesta.getBody().getId()).isEqualTo(creado.getId());
         assertThat(respuesta.getBody().getEdad()).isEqualTo(41);
         assertThat(restTemplate.getForObject(API + "/{id}", Alumno.class, creado.getId()).getNombre())
-                .isEqualTo("CliWCPut2");
+                .isEqualTo("CliJdkAPut2");
     }
 
     @Test
     void putPorClienteDeUnIdInexistenteDaNotFoundYInvalidoBadRequest() {
-        Alumno creado = crearPorCliente("CliWCPut404");
+        Alumno creado = crearPorCliente("CliJdkAPut404");
 
         assertThat(restTemplate.exchange(CLIENTE + "/{id}", HttpMethod.PUT,
                 new HttpEntity<>(alumnoDto("Nuevo")), String.class, creado.getId() + 1000).getStatusCode())
@@ -114,17 +114,17 @@ class AlumnoWebClientClienteControllerAceptacionTest {
 
     @Test
     void patchPorClienteModificaSoloLosCamposEnviados() {
-        Alumno creado = crearPorCliente("CliWCPatch");
+        Alumno creado = crearPorCliente("CliJdkAPatch");
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.CONTENT_TYPE, "application/merge-patch+json");
 
         ResponseEntity<Alumno> respuesta = restTemplate.exchange(CLIENTE + "/{id}", HttpMethod.PATCH,
-                new HttpEntity<>("{\"nombre\":\"CliWCPatch2\"}", headers), Alumno.class, creado.getId());
+                new HttpEntity<>("{\"nombre\":\"CliJdkAPatch2\"}", headers), Alumno.class, creado.getId());
 
         assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(respuesta.getBody().getNombre()).isEqualTo("CliWCPatch2");
+        assertThat(respuesta.getBody().getNombre()).isEqualTo("CliJdkAPatch2");
         Alumno enApi = restTemplate.getForObject(API + "/{id}", Alumno.class, creado.getId());
-        assertThat(enApi.getNombre()).isEqualTo("CliWCPatch2");
+        assertThat(enApi.getNombre()).isEqualTo("CliJdkAPatch2");
         assertThat(enApi.getApellidos()).isEqualTo(creado.getApellidos());
         assertThat(enApi.getEdad()).isEqualTo(creado.getEdad());
     }

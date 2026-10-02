@@ -10,13 +10,13 @@ import tools.jackson.databind.JsonNode;
 import java.util.List;
 import java.util.Optional;
 
-@Service("alumnoWebClientClienteService")
-public class AlumnoWebClientClienteServiceImpl implements AlumnoClienteService {
+@Service("alumnoJdkHttpClienteService")
+public class AlumnoJdkHttpClienteServiceImpl implements AlumnoClienteService {
 
     private final AlumnoApiRepository repository;
 
-    public AlumnoWebClientClienteServiceImpl(
-            @Qualifier("alumnoWebClientApiRepository") AlumnoApiRepository repository) {
+    public AlumnoJdkHttpClienteServiceImpl(
+            @Qualifier("alumnoJdkHttpApiRepository") AlumnoApiRepository repository) {
         this.repository = repository;
     }
 
