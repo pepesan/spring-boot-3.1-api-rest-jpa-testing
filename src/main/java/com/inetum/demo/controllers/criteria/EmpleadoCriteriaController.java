@@ -1,6 +1,6 @@
 package com.inetum.demo.controllers.criteria;
 
-import com.inetum.demo.domain.herencia.Empleado;
+import com.inetum.demo.domain.herencia.joined.Empleado;
 import com.inetum.demo.services.criteria.EmpleadoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

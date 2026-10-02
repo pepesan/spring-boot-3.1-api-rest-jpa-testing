@@ -1,13 +1,13 @@
 package com.inetum.demo.herencia;
 
 import com.inetum.demo.domain.Alumno;
-import com.inetum.demo.domain.herencia.Ordenador;
-import com.inetum.demo.domain.herencia.Portatil;
-import com.inetum.demo.domain.herencia.Sobremesa;
+import com.inetum.demo.domain.herencia.joined.Ordenador;
+import com.inetum.demo.domain.herencia.joined.Portatil;
+import com.inetum.demo.domain.herencia.joined.Sobremesa;
 import com.inetum.demo.repositories.AlumnoRepository;
-import com.inetum.demo.repositories.herencia.OrdenadorRepository;
-import com.inetum.demo.repositories.herencia.PortatilRepository;
-import com.inetum.demo.repositories.herencia.SobremesaRepository;
+import com.inetum.demo.repositories.herencia.joined.OrdenadorRepository;
+import com.inetum.demo.repositories.herencia.joined.PortatilRepository;
+import com.inetum.demo.repositories.herencia.joined.SobremesaRepository;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,10 +41,6 @@ public class HerenciaTest {
     @BeforeEach
     void setup(){
         // given
-        Ordenador ordenador = new Ordenador();
-        ordenador.setModelo("9355");
-        ordenador.setMarca("Dell");
-        testEntityManager.persist(ordenador);
         Portatil portatil = new Portatil();
         portatil.setModelo("9355");
         portatil.setMarca("Dell");
@@ -64,7 +60,7 @@ public class HerenciaTest {
     public void pruebaOrdenadores(){
         List<Ordenador> ordenadores =
                 this.ordenadorRepository.findAll();
-        assertEquals(ordenadores.size(), 3);
+        assertEquals(ordenadores.size(), 2);
         List<Sobremesa> sobremesas =
                 this.sobremesaRepository.findAll();
         assertEquals(sobremesas.size(), 1);

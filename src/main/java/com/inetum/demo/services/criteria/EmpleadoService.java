@@ -1,7 +1,7 @@
 package com.inetum.demo.services.criteria;
 
-import com.inetum.demo.domain.herencia.Empleado;
-import com.inetum.demo.repositories.herencia.EmpleadoRepository;
+import com.inetum.demo.domain.herencia.joined.Empleado;
+import com.inetum.demo.repositories.herencia.joined.EmpleadoRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
