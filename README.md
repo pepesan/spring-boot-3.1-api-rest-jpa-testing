@@ -84,6 +84,29 @@ Genera:
 - `target/reports-json/junit-summary.json` — resumen de tests en JSON (por clase y total).
 - `target/reports-json/jacoco-summary.json` — resumen de cobertura en JSON (por paquete y total).
 
+## Verificación completa (`mvn verify`)
+
+    mvn clean verify
+
+Compila, pasa todos los tests, empaqueta el jar y ejecuta los controles de calidad.
+Genera:
+
+- `target/demo-0.0.1-SNAPSHOT.jar` — jar ejecutable (fat jar de Spring Boot); `verify` no lo instala en el repositorio local (eso es `mvn install`).
+- `target/surefire-reports/TEST-*.xml` — resultados de test en XML/JUnit.
+- `target/reports/surefire-report.html` — resultados de test en HTML.
+- `target/site/jacoco/index.html`, `jacoco.xml` y `jacoco.csv` — cobertura de código.
+- `target/spotbugsXml.xml` — análisis estático SpotBugs en XML.
+- `target/reports/spotbugs.html` — análisis estático SpotBugs en HTML.
+- `target/cucumber-report.html` y `.json` — informes de Cucumber.
+
+`verify` **falla** si:
+
+- la cobertura global de JaCoCo baja del 80 % de líneas o del 80 % de ramas, o
+- SpotBugs (umbral Medium) encuentra algún hallazgo que no esté en `spotbugs-exclude.xml`.
+
+Los informes HTML se escriben antes de esos controles, así que existen aunque el build falle.
+Los resúmenes en JSON y el análisis con Sonar no forman parte de `verify`: ver las secciones siguientes.
+
 ## Análisis SonarQube/SonarCloud
 
     SONAR_HOST_URL=https://sonarcloud.io SONAR_TOKEN=xxx scripts/sonar-scan.sh

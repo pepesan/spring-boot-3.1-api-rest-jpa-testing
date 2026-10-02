@@ -413,6 +413,18 @@
 					<excludeFilterFile>${project.basedir}/spotbugs-exclude.xml</excludeFilterFile>
 				</configuration>
 				<executions>
+					<!-- Informe HTML legible (target/reports/spotbugs.html); va antes del check para que se genere
+					     aunque el gate falle. -->
+					<execution>
+						<id>spotbugs-html</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>spotbugs</goal>
+						</goals>
+						<configuration>
+							<htmlOutput>true</htmlOutput>
+						</configuration>
+					</execution>
 					<execution>
 						<id>spotbugs-check</id>
 						<phase>verify</phase>
@@ -423,12 +435,27 @@
 				</executions>
 			</plugin>
 			<!-- Informe HTML de los resultados de test (a partir del XML JUnit que ya genera
-			     Surefire en target/surefire-reports): se invoca con
-			     `mvn surefire-report:report-only`, ver scripts/run-coverage.sh. -->
+			     Surefire en target/surefire-reports): se genera en `mvn verify`; también se puede
+			     invocar a mano con `mvn surefire-report:report-only`, ver scripts/run-coverage.sh. -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-report-plugin</artifactId>
 				<version>${maven-surefire-report-plugin.version}</version>
+				<executions>
+					<!-- Genera target/reports/surefire-report.html (y lo deja en verify, sin lanzar `site`).
+					     Va antes que los gates de cobertura/SpotBugs para que exista aunque fallen. -->
+					<execution>
+						<id>surefire-html-report</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>report-only</goal>
+						</goals>
+						<configuration>
+							<!-- Mismo nombre que scripts/run-coverage.sh -> target/reports/surefire-report.html -->
+							<outputName>surefire-report</outputName>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<!-- Análisis SonarQube/SonarCloud: se invoca con `mvn verify sonar:sonar`
 			     (ver scripts/sonar-scan.sh), nunca con host/token fijados aquí. -->
