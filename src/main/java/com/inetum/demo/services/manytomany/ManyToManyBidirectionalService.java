@@ -2,6 +2,7 @@ package com.inetum.demo.services.manytomany;
 
 import com.inetum.demo.domain.manytomany.Role;
 import com.inetum.demo.domain.manytomany.User;
+import com.inetum.demo.dtos.manytomany.RoleWithUsersDto;
 import com.inetum.demo.repositories.manytomany.RoleRepository;
 import com.inetum.demo.repositories.manytomany.UserRepository;
 import jakarta.persistence.EntityManager;
@@ -32,6 +33,8 @@ public class ManyToManyBidirectionalService {
     public void deleteAll() {
         // ejecuta directamente el DELETE en la tabla de relación
         userRepository.deleteAllUserRoles();
+        userRepository.deleteAll();
+        roleRepository.deleteAll();
     }
 
 
@@ -49,7 +52,21 @@ public class ManyToManyBidirectionalService {
         role.setName("Admin");
         this.roleRepository.save(role);
         user.getRoles().add(role);
+        // User David - Admin
         this.userRepository.save(user);
+        user = new User();
+        user.setFirstName("Javier");
+        this.userRepository.save(user);
+        user.getRoles().add(role);
+        // User Javier - Admin
+        // this.userRepository.save(user);
+        role = new Role ();
+        role.setName("User");
+        this.roleRepository.save(role);
+        user.getRoles().add(role);
+        // User Javier - User
+        this.userRepository.save(user);
+
         return this.userRepository.findAll();
     }
 
@@ -63,11 +80,32 @@ public class ManyToManyBidirectionalService {
         role.setName("Admin");
         this.roleRepository.save(role);
         user.getRoles().add(role);
+        role = new Role ();
+        role.setName("User");
+        this.roleRepository.save(role);
+        user.getRoles().add(role);
+        this.userRepository.save(user);
+        user = new User();
+        user.setFirstName("Javier");
+        this.userRepository.save(user);
+        role = new Role ();
+        role.setName("Admin");
+        this.roleRepository.save(role);
+        user.getRoles().add(role);
         this.userRepository.save(user);
         return this.roleRepository.findAll();
     }
 
     public List<Role> listadoRoles() {
         return this.roleRepository.findAll();
+    }
+    /** Lista los roles con sus usuarios asignados, ya convertidos a DTO. */
+    public List<RoleWithUsersDto> listadoRolesConUsuarios() {
+        return this.roleRepository.findAll().stream()
+                .map(RoleWithUsersDto::from)
+                .toList();
+    }
+    public List<User> listadoUsers() {
+        return this.userRepository.findAll();
     }
 }

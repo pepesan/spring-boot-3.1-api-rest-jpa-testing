@@ -21,6 +21,9 @@ public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+    // Clave de igualdad de negocio. Con onlyExplicitlyIncluded = true y ningún campo incluido,
+    // Lombok hace que todos los Role sean "iguales" y el Set<Role> de User descarta roles distintos.
+    @EqualsAndHashCode.Include
     private String name;
 
     @ManyToMany(cascade = {

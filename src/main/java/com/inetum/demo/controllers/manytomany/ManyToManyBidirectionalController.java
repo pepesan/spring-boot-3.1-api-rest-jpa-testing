@@ -2,6 +2,7 @@ package com.inetum.demo.controllers.manytomany;
 
 import com.inetum.demo.domain.manytomany.Role;
 import com.inetum.demo.domain.manytomany.User;
+import com.inetum.demo.dtos.manytomany.RoleWithUsersDto;
 import com.inetum.demo.services.manytomany.ManyToManyBidirectionalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -51,6 +52,11 @@ public class ManyToManyBidirectionalController {
         List<Role> roles = this.manyToManyService.doSomethingRoles();
         return new ResponseEntity<>(roles, HttpStatus.OK);
     }
+    @GetMapping("/usuarios")
+    public ResponseEntity<List<User>> indexUsers(){
+        List<User> users = this.manyToManyService.listadoUsers();
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
 
     @GetMapping("/listado")
     public ResponseEntity<List<User>> listado(){
@@ -58,9 +64,10 @@ public class ManyToManyBidirectionalController {
         return new ResponseEntity<>(this.manyToManyService.listado(), HttpStatus.OK);
     }
 
+    // Devuelve DTOs (rol + usuarios) en lugar de entidades para obtener un JSON plano, sin ids de referencia.
     @GetMapping("/listadoRoles")
-    public ResponseEntity<List<Role>> listadoRoles(){
+    public ResponseEntity<List<RoleWithUsersDto>> listadoRoles(){
 
-        return new ResponseEntity<>(this.manyToManyService.listadoRoles(), HttpStatus.OK);
+        return new ResponseEntity<>(this.manyToManyService.listadoRolesConUsuarios(), HttpStatus.OK);
     }
 }

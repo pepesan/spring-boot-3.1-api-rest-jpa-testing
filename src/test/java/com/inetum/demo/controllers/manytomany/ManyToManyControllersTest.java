@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -50,6 +51,8 @@ class ManyToManyControllersTest {
         mockMvc.perform(get("/api/v1/manytomanyuni/"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].titulo").value("Noticia 1"))
-                .andExpect(jsonPath("$[0].etiquetas[0].nombre").value("Etiqueta 1"));
+                // etiquetas es un Set (HashSet): no tiene orden garantizado, se comprueba sin depender de él
+                .andExpect(jsonPath("$[0].etiquetas[*].nombre",
+                        containsInAnyOrder("Etiqueta 1", "Etiqueta 2")));
     }
 }
