@@ -44,6 +44,8 @@ public class OneToManyService {
         gender = new Gender();
         gender.setName("Medieval");
         this.genderRepository.save(gender);
+        book = new Book();
+        book.setTitle("Guardias!! Guardias??");
         gender.getBooks().add(book);
         this.genderRepository.save(gender);
         return this.genderRepository.findAll();

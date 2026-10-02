@@ -36,7 +36,11 @@ public class OneToManyBiService {
         address2.setCity("Salamanca");
         address2.setStreet("Mayor");
         address2.setPerson(p);
-        this.address2Repository.save(address2);
+        p.getAddresses().add(address2);
+        address2 = new Address2();
+        address2.setCity("Madrid");
+        address2.setStreet("Fuencarral");
+        address2.setPerson(p);
         p.getAddresses().add(address2);
         this.personRepository.save(p);
         return this.personRepository.findAll();

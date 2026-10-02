@@ -1,9 +1,7 @@
 package com.inetum.demo.domain.onetomany;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,7 +14,6 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Person {
 
@@ -26,7 +23,12 @@ public class Person {
 
     private String name;
 
-    // @JsonManagedReference
+    // Evita el ciclo Person -> addresses -> person -> addresses...
+    // Antes se usaba @JsonIdentityInfo, que serializa cada objeto completo solo la primera vez
+    // y despues lo sustituye por su id (ej. "person": 1, o un "2" suelto en la lista),
+    // dando un JSON inconsistente segun desde donde se empiece a serializar.
+    // Aqui se corta el ciclo ignorando la propiedad inversa "person" en cada direccion.
+    @JsonIgnoreProperties("person")
     @OneToMany(mappedBy = "person",
             cascade = CascadeType.ALL,
             orphanRemoval = true)
