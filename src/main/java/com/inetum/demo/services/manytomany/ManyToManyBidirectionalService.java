@@ -35,6 +35,9 @@ public class ManyToManyBidirectionalService {
         userRepository.deleteAllUserRoles();
         userRepository.deleteAll();
         roleRepository.deleteAll();
+        // Hibernate ejecuta los INSERT antes que los DELETE al hacer flush; sin esto, volver a crear
+        // un rol con el mismo name chocaría con la restricción unique antes de borrar el antiguo.
+        roleRepository.flush();
     }
 
 
@@ -80,19 +83,21 @@ public class ManyToManyBidirectionalService {
         role.setName("Admin");
         this.roleRepository.save(role);
         user.getRoles().add(role);
-        role = new Role ();
-        role.setName("User");
-        this.roleRepository.save(role);
-        user.getRoles().add(role);
+        // Relación David - Admin
         this.userRepository.save(user);
         user = new User();
         user.setFirstName("Javier");
         this.userRepository.save(user);
+        user.getRoles().add(role);
+        // Relación Javier - Admin
+        this.userRepository.save(user);
         role = new Role ();
-        role.setName("Admin");
+        role.setName("User");
         this.roleRepository.save(role);
         user.getRoles().add(role);
+        // Relación Javier - User
         this.userRepository.save(user);
+
         return this.roleRepository.findAll();
     }
 
