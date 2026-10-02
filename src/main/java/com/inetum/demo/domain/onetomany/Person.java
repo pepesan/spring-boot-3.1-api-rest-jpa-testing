@@ -14,7 +14,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties()
 public class Person {
 
     @Id
@@ -28,7 +28,7 @@ public class Person {
     // y después lo sustituye por su id (ej. "person": 1, o un "2" suelto en la lista),
     // dando un JSON inconsistente según desde donde se empiece a serializar.
     // Aquí se corta el ciclo ignorando la propiedad inversa "person" en cada direccion.
-    @JsonIgnoreProperties("person")
+    @JsonIgnoreProperties({"person", "hibernateLazyInitializer", "handler"} )
     @OneToMany(mappedBy = "person",
             cascade = CascadeType.ALL,
             orphanRemoval = true)
