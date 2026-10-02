@@ -23,12 +23,12 @@ public class Address2 {
     private String city;
 
     // Lado inverso: al serializar la persona dentro de una direccion se ignora su lista
-    // "addresses" para cortar el ciclo (ver comentario en Person.addresses sobre por que
+    // "addresses" para cortar el ciclo (ver comentario en Person.addresses sobre por qué
     // no se usa @JsonIdentityInfo).
     // "hibernateLazyInitializer" y "handler" son propiedades internas del proxy que Hibernate
     // crea para esta relacion LAZY (person no se carga hasta que se accede a ella). Jackson
     // las veria como getters del proxy y fallaria al serializarlas (o las incluiria en el
-    // JSON), asi que se ignoran. Person ya las ignora a nivel de clase; se repiten aqui
+    // JSON), asi que se ignoran. Person ya las ignora a nivel de clase; se repiten aquí
     // por seguridad, para no depender de como Jackson combine ambas anotaciones.
     @JsonIgnoreProperties({"addresses", "hibernateLazyInitializer", "handler"})
     @ManyToOne(fetch = FetchType.LAZY)

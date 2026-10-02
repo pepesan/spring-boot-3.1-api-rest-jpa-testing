@@ -24,10 +24,10 @@ public class Person {
     private String name;
 
     // Evita el ciclo Person -> addresses -> person -> addresses...
-    // Antes se usaba @JsonIdentityInfo, que serializa cada objeto completo solo la primera vez
-    // y despues lo sustituye por su id (ej. "person": 1, o un "2" suelto en la lista),
-    // dando un JSON inconsistente segun desde donde se empiece a serializar.
-    // Aqui se corta el ciclo ignorando la propiedad inversa "person" en cada direccion.
+    // POr defecto el @JsonIdentityInfo, serializa cada objeto completo solo la primera vez
+    // y después lo sustituye por su id (ej. "person": 1, o un "2" suelto en la lista),
+    // dando un JSON inconsistente según desde donde se empiece a serializar.
+    // Aquí se corta el ciclo ignorando la propiedad inversa "person" en cada direccion.
     @JsonIgnoreProperties("person")
     @OneToMany(mappedBy = "person",
             cascade = CascadeType.ALL,
