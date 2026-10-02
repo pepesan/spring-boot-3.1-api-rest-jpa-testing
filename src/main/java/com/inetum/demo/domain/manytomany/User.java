@@ -1,6 +1,7 @@
 package com.inetum.demo.domain.manytomany;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -34,5 +35,7 @@ public class User {
                     name = "role_id", referencedColumnName = "id"
             )
     )
+    // Al serializar los roles de un usuario no se repite role.users (ya sabemos de qué usuario venimos)
+    @JsonIgnoreProperties("users")
     private Set<Role> roles = new HashSet<>();
 }
