@@ -32,7 +32,15 @@ public class ManyToManyUnidirectionalService {
         etiqueta.setNombre("Etiqueta 1");
         this.etiquetaRepository.save(etiqueta);
         noticia.getEtiquetas().add(etiqueta);
+        etiqueta = new Etiqueta();
+        etiqueta.setNombre("Etiqueta 2");
+        this.etiquetaRepository.save(etiqueta);
+        noticia.getEtiquetas().add(etiqueta);
         this.noticiaRepository.save(noticia);
         return this.noticiaRepository.findAll();
+    }
+
+    public List<Etiqueta> listEtiquetas() {
+        return  this.etiquetaRepository.findAll();
     }
 }

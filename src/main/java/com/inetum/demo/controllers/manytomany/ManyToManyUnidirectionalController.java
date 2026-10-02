@@ -1,5 +1,6 @@
 package com.inetum.demo.controllers.manytomany;
 
+import com.inetum.demo.domain.manytomany.Etiqueta;
 import com.inetum.demo.domain.manytomany.Noticia;
 import com.inetum.demo.services.manytomany.ManyToManyUnidirectionalService;
 import lombok.Data;
@@ -46,6 +47,11 @@ public class ManyToManyUnidirectionalController {
       }
     ]
      */
-
+    @GetMapping("/etiquetas")
+    public ResponseEntity<List<Etiqueta>> listTags(){
+        return new ResponseEntity<>(
+                this.service.listEtiquetas(),
+                HttpStatus.OK);
+    }
 
 }
