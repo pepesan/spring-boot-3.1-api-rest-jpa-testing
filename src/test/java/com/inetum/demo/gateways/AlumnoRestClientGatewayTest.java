@@ -1,5 +1,10 @@
 package com.inetum.demo.gateways;
 
+import tools.jackson.databind.json.JsonMapper;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
+import static org.springframework.http.HttpMethod.PATCH;
+import static org.springframework.http.HttpMethod.PUT;
 import com.inetum.demo.clientes.AlumnoApiBaseUrl;
 import com.inetum.demo.domain.Alumno;
 import com.inetum.demo.dtos.AlumnoDTO;
@@ -142,6 +147,57 @@ class AlumnoRestClientGatewayTest {
         server.expect(ExpectedCount.once(), requestTo(URL + "/9")).andRespond(withResourceNotFound());
 
         assertThat(gateway.delete(9L)).isEmpty();
+        server.verify();
+    }
+
+    @Test
+    void putReintentaElFalloYDevuelveElAlumnoModificado() {
+        server.expect(ExpectedCount.once(), requestTo(URL + "/1")).andExpect(method(PUT))
+                .andRespond(withServerError());
+        server.expect(ExpectedCount.once(), requestTo(URL + "/1")).andExpect(method(PUT))
+                .andRespond(withSuccess(ALUMNO_JSON, APPLICATION_JSON));
+
+        assertThat(gateway.update(1L, new AlumnoDTO())).map(Alumno::getNombre).contains("Marta");
+        server.verify();
+    }
+
+    @Test
+    void putDeUnInexistenteDevuelveVacioSinReintentar() {
+        server.expect(ExpectedCount.once(), requestTo(URL + "/9")).andExpect(method(PUT))
+                .andRespond(withResourceNotFound());
+
+        assertThat(gateway.update(9L, new AlumnoDTO())).isEmpty();
+        server.verify();
+    }
+
+    @Test
+    void patchEnviaMergePatchYDevuelveElAlumno() {
+        server.expect(ExpectedCount.once(), requestTo(URL + "/1")).andExpect(method(PATCH))
+                .andExpect(header("Content-Type", "application/merge-patch+json"))
+                .andExpect(content().json("{\"nombre\":\"Marta\"}"))
+                .andRespond(withSuccess(ALUMNO_JSON, APPLICATION_JSON));
+
+        assertThat(gateway.patch(1L, new JsonMapper().readTree("{\"nombre\":\"Marta\"}")))
+                .map(Alumno::getNombre).contains("Marta");
+        server.verify();
+    }
+
+    @Test
+    void elPatchNoSeReintentaAunqueDeError500() {
+        server.expect(ExpectedCount.once(), requestTo(URL + "/1")).andExpect(method(PATCH))
+                .andRespond(withServerError());
+
+        assertThatThrownBy(() -> gateway.patch(1L, new JsonMapper().readTree("{}")))
+                .isInstanceOfSatisfying(AlumnoGatewayException.class, e -> assertThat(e.isTransitorio()).isTrue());
+        server.verify();
+    }
+
+    @Test
+    void patchDeUnInexistenteDevuelveVacio() {
+        server.expect(ExpectedCount.once(), requestTo(URL + "/9")).andExpect(method(PATCH))
+                .andRespond(withResourceNotFound());
+
+        assertThat(gateway.patch(9L, new JsonMapper().readTree("{}"))).isEmpty();
         server.verify();
     }
 }

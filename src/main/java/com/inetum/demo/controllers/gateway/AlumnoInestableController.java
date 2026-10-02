@@ -6,6 +6,7 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import tools.jackson.databind.JsonNode;
 
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,7 @@ import java.util.concurrent.atomic.AtomicLong;
  *   <li>{@code POST /config?fallos=N}: las N primeras llamadas de datos responden 500</li>
  *   <li>{@code POST /config?lentoMs=M}: cada llamada de datos tarda M ms (para provocar timeouts)</li>
  *   <li>{@code GET /llamadas}: nº de llamadas de datos recibidas; {@code POST /reset}: lo deja todo a cero</li>
+ *   <li>PUT y PATCH existen también y devuelven el alumno modificado</li>
  *   <li>el id 404 responde siempre 404 (para comprobar que un 4xx no se reintenta)</li>
  * </ul>
  */
@@ -69,6 +71,28 @@ public class AlumnoInestableController {
     public Alumno add(@RequestBody AlumnoDTO dto) {
         simular();
         return new Alumno(1L, dto.getNombre(), dto.getApellidos(), dto.getEdad());
+    }
+
+    @PutMapping("/{id}")
+    public Alumno replace(@PathVariable Long id, @RequestBody AlumnoDTO dto) {
+        simular();
+        if (id == 404L) {
+            throw new ResourceNotFoundException("Not found with id = " + id);
+        }
+        return new Alumno(id, dto.getNombre(), dto.getApellidos(), dto.getEdad());
+    }
+
+    @PatchMapping(value = "/{id}", consumes = "application/merge-patch+json")
+    public Alumno patch(@PathVariable Long id, @RequestBody JsonNode patch) {
+        simular();
+        if (id == 404L) {
+            throw new ResourceNotFoundException("Not found with id = " + id);
+        }
+        Alumno alumno = alumno(id);
+        if (patch.has("nombre")) {
+            alumno.setNombre(patch.get("nombre").asString());
+        }
+        return alumno;
     }
 
     @DeleteMapping("/{id}")

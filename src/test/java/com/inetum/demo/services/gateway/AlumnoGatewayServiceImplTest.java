@@ -1,5 +1,6 @@
 package com.inetum.demo.services.gateway;
 
+import tools.jackson.databind.json.JsonMapper;
 import com.inetum.demo.domain.Alumno;
 import com.inetum.demo.dtos.AlumnoDTO;
 import com.inetum.demo.gateways.AlumnoGateway;
@@ -70,5 +71,16 @@ class AlumnoGatewayServiceImplTest {
         assertThat(service.findById(1L)).contains(alumno);
         assertThat(service.create(dto)).isEqualTo(alumno);
         assertThat(service.remove(1L)).contains(alumno);
+    }
+
+    @Test
+    void updateYPatchDelegaNEnElGateway() {
+        AlumnoDTO dto = new AlumnoDTO();
+        JsonMapper mapper = new JsonMapper();
+        when(gateway.update(1L, dto)).thenReturn(Optional.of(alumno));
+        when(gateway.patch(2L, mapper.readTree("{}"))).thenReturn(Optional.empty());
+
+        assertThat(service.update(1L, dto)).contains(alumno);
+        assertThat(service.patch(2L, mapper.readTree("{}"))).isEmpty();
     }
 }

@@ -8,9 +8,11 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.retry.RetryException;
 import org.springframework.core.retry.RetryTemplate;
 import org.springframework.core.retry.Retryable;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
+import tools.jackson.databind.JsonNode;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,8 +20,9 @@ import java.util.Optional;
 /**
  * Gateway con {@link RestClient} y reintentos de Spring Framework 7 ({@link RetryTemplate}).
  * <p>
- * Solo se reintentan las operaciones idempotentes (GET y DELETE). {@link #create} NO se reintenta:
- * si el servidor guardó el alumno pero la respuesta se perdió, reintentar lo duplicaría.
+ * Solo se reintentan las operaciones idempotentes (GET, PUT y DELETE). {@link #create} NO se reintenta:
+ * si el servidor guardó el alumno pero la respuesta se perdió, reintentar lo duplicaría. Tampoco
+ * {@link #patch}: según HTTP, PATCH no es idempotente en general (un parche podría ser relativo).
  */
 @Slf4j
 @Component
@@ -74,6 +77,37 @@ public class AlumnoRestClientGateway implements AlumnoGateway {
                     .body(Alumno.class);
         } catch (RuntimeException e) {
             throw traducir("create", e);
+        }
+    }
+
+    @Override
+    public Optional<Alumno> update(Long id, AlumnoDTO alumno) {
+        return conReintentos("update", () -> {
+            try {
+                return Optional.ofNullable(restClient.put()
+                        .uri(url() + "/{id}", id)
+                        .body(alumno)
+                        .retrieve()
+                        .body(Alumno.class));
+            } catch (HttpClientErrorException.NotFound e) {
+                return Optional.empty();
+            }
+        });
+    }
+
+    @Override
+    public Optional<Alumno> patch(Long id, JsonNode patch) {
+        try {
+            return Optional.ofNullable(restClient.patch()
+                    .uri(url() + "/{id}", id)
+                    .contentType(MediaType.valueOf("application/merge-patch+json"))
+                    .body(patch)
+                    .retrieve()
+                    .body(Alumno.class));
+        } catch (HttpClientErrorException.NotFound e) {
+            return Optional.empty();
+        } catch (RuntimeException e) {
+            throw traducir("patch", e);
         }
     }
 

@@ -6,6 +6,7 @@ import com.inetum.demo.gateways.AlumnoGateway;
 import com.inetum.demo.gateways.AlumnoGatewayException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import tools.jackson.databind.JsonNode;
 
 import java.util.List;
 import java.util.Optional;
@@ -46,6 +47,16 @@ public class AlumnoGatewayServiceImpl implements AlumnoGatewayService {
     @Override
     public Alumno create(AlumnoDTO alumno) {
         return gateway.create(alumno);
+    }
+
+    @Override
+    public Optional<Alumno> update(Long id, AlumnoDTO alumno) {
+        return gateway.update(id, alumno);
+    }
+
+    @Override
+    public Optional<Alumno> patch(Long id, JsonNode patch) {
+        return gateway.patch(id, patch);
     }
 
     @Override

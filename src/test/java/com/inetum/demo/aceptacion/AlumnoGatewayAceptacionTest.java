@@ -1,5 +1,7 @@
 package com.inetum.demo.aceptacion;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpEntity;
 import com.inetum.demo.controllers.gateway.AlumnoGatewayController;
 import com.inetum.demo.domain.Alumno;
 import com.inetum.demo.dtos.AlumnoDTO;
@@ -134,5 +136,68 @@ class AlumnoGatewayAceptacionTest {
 
         assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
         assertThat(llamadasAlRemoto()).isEqualTo(1);
+    }
+
+    private static HttpEntity<String> mergePatch(String json) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.CONTENT_TYPE, "application/merge-patch+json");
+        return new HttpEntity<>(json, headers);
+    }
+
+    private static AlumnoDTO alumnoDto() {
+        AlumnoDTO dto = new AlumnoDTO();
+        dto.setNombre("Marta");
+        dto.setApellidos("Perez");
+        dto.setEdad(30);
+        return dto;
+    }
+
+    @Test
+    void elPutSeReintentaYSeRecuperaDeLosFallos() {
+        configurar(2, 0);
+
+        ResponseEntity<Alumno> respuesta = restTemplate.exchange(GATEWAY + "/{id}", HttpMethod.PUT,
+                new HttpEntity<>(alumnoDto()), Alumno.class, 5);
+
+        assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(respuesta.getBody().getId()).isEqualTo(5L);
+        assertThat(respuesta.getBody().getNombre()).isEqualTo("Marta");
+        assertThat(llamadasAlRemoto()).isEqualTo(3);
+    }
+
+    @Test
+    void elPutInvalidoDa400SinLlamarAlRemotoYUnIdInexistenteDa404() {
+        AlumnoDTO invalido = alumnoDto();
+        invalido.setNombre("ab");
+
+        assertThat(restTemplate.exchange(GATEWAY + "/{id}", HttpMethod.PUT, new HttpEntity<>(invalido),
+                String.class, 5).getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(llamadasAlRemoto()).isZero();
+        assertThat(restTemplate.exchange(GATEWAY + "/{id}", HttpMethod.PUT, new HttpEntity<>(alumnoDto()),
+                String.class, 404).getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(llamadasAlRemoto()).isEqualTo(1);
+    }
+
+    @Test
+    void elPatchModificaElCampoEnviado() {
+        ResponseEntity<Alumno> respuesta = restTemplate.exchange(GATEWAY + "/{id}", HttpMethod.PATCH,
+                mergePatch("{\"nombre\":\"Nuevo\"}"), Alumno.class, 5);
+
+        assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(respuesta.getBody().getNombre()).isEqualTo("Nuevo");
+        assertThat(llamadasAlRemoto()).isEqualTo(1);
+    }
+
+    @Test
+    void elPatchNoSeReintentaAunqueFalleYUnIdInexistenteDa404() {
+        configurar(10, 0);
+
+        assertThat(restTemplate.exchange(GATEWAY + "/{id}", HttpMethod.PATCH, mergePatch("{}"),
+                String.class, 5).getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
+        assertThat(llamadasAlRemoto()).isEqualTo(1);
+
+        configurar(0, 0);
+        assertThat(restTemplate.exchange(GATEWAY + "/{id}", HttpMethod.PATCH, mergePatch("{}"),
+                String.class, 404).getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 }

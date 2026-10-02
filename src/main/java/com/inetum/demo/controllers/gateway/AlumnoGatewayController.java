@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import tools.jackson.databind.JsonNode;
 
 import java.util.List;
 
@@ -46,6 +47,18 @@ public class AlumnoGatewayController {
     @PostMapping("/")
     public Alumno add(@Valid @RequestBody AlumnoDTO alumno) {
         return service.create(alumno);
+    }
+
+    @PutMapping("/{id}")
+    public Alumno replace(@PathVariable Long id, @Valid @RequestBody AlumnoDTO alumno) {
+        return service.update(id, alumno).orElseThrow(() ->
+                new ResourceNotFoundException("Not found with id = " + id));
+    }
+
+    @PatchMapping(value = "/{id}", consumes = "application/merge-patch+json")
+    public Alumno patch(@PathVariable Long id, @RequestBody JsonNode patch) {
+        return service.patch(id, patch).orElseThrow(() ->
+                new ResourceNotFoundException("Not found with id = " + id));
     }
 
     @DeleteMapping("/{id}")
